@@ -11,7 +11,7 @@ class Scan extends StatelessWidget {
       body: Center(
         child: Container(
           child: Text(
-            'Login Screen',
+            'Scan Screen',
             style: TextStyle(fontSize: 24.0),
           ),
         ),

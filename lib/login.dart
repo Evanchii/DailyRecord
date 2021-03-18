@@ -1,5 +1,6 @@
-import 'package:dailyrecord/dashboard.dart';
+import 'package:dailyrecord/dashframe.dart';
 import 'package:dailyrecord/signup.dart';
+import 'package:dailyrecord/user.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatelessWidget {
@@ -16,7 +17,7 @@ class Login extends StatelessWidget {
       if(true) {//user found
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Dashboard()),
+          MaterialPageRoute(builder: (context) => DashFrame()),
         );
       }
     }

@@ -1,18 +1,19 @@
 import 'package:dailyrecord/login.dart';
-import 'package:dailyrecord/dashboard.dart';
+import 'package:dailyrecord/dashframe.dart';
 
 import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
-import 'package:dailyrecord/user.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
+  permissionCheck();
   //check if user has active session
   if(false) {
-    Dashboard();
+    DashFrame();
   }
 
   runApp(new MaterialApp(
-    home: User(),
+    home: Splashscreen(),
     theme: ThemeData(
       // Define the default brightness and colors.
       brightness: Brightness.dark,
@@ -31,6 +32,12 @@ void main() {
       ),
     ),
   ));
+}
+
+void permissionCheck() async {
+  var status = await Permission.camera.status;
+  while(!(status.isGranted || status.isLimited))
+    Permission.camera.request();
 }
 
 class Splashscreen extends StatefulWidget {

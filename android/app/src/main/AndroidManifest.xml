@@ -1,5 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ml.dailyrecord.dailyrecord">
+
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
    <application
         android:label="dailyrecord"
         android:icon="@mipmap/ic_launcher">
