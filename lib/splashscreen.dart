@@ -1,10 +1,11 @@
 import 'package:dailyrecord/login.dart';
 import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
+import 'package:dailyrecord/signup.dart';
 
 void main() {
   runApp(new MaterialApp(
-    home: Splashscreen()
+    home: Signup()
   ));
 }
 
