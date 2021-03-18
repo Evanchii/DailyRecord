@@ -3,6 +3,7 @@ import 'package:dailyrecord/dashboard.dart';
 
 import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
+import 'package:dailyrecord/user.dart';
 
 void main() {
   //check if user has active session
@@ -11,7 +12,7 @@ void main() {
   }
 
   runApp(new MaterialApp(
-    home: Splashscreen(),
+    home: User(),
     theme: ThemeData(
       // Define the default brightness and colors.
       brightness: Brightness.dark,
