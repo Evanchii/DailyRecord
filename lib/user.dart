@@ -62,7 +62,8 @@ class User extends StatelessWidget {
                           style: TextStyle(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
-                              color: Colors.white),
+                              color: Colors.white
+                          ),
                         ),
                         Text(
                           "%last_name%, %first_name%",
