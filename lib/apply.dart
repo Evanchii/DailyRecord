@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-
-
 // class Apply extends StatelessWidget {
 class Apply extends StatefulWidget {
   _apply createState()=>_apply();
@@ -16,7 +14,7 @@ class _apply extends State<Apply>{
 
   final picker = ImagePicker();
 
-  void _openGaleryDL(BuildContext context) async {
+  void _openGalleryDL(BuildContext context) async {
     var _pictureDL = await picker.getImage(source: ImageSource.gallery);
     this.setState(() {
       if(_pictureDL!=null){
@@ -27,6 +25,7 @@ class _apply extends State<Apply>{
     });
     Navigator.of(context).pop();
   }
+
   void _openCameraDL(BuildContext context)async{
    var _pictureDL = await picker.getImage(source: ImageSource.camera);
     this.setState(() {
@@ -49,9 +48,9 @@ class _apply extends State<Apply>{
           child: ListBody(
             children: <Widget>[
               GestureDetector(
-                child: Text("Galery",style: TextStyle(fontSize: 15.0,fontWeight: FontWeight.w500),),
+                child: Text("Gallery",style: TextStyle(fontSize: 15.0,fontWeight: FontWeight.w500),),
                 onTap: (){
-                  _openGaleryDL(context);
+                  _openGalleryDL(context);
                 },
               ),
               Padding(padding: EdgeInsets.all(8.0)),
@@ -67,7 +66,7 @@ class _apply extends State<Apply>{
       );
     });
   }
-  void _openGaleryORCR(BuildContext context) async {
+  void _openGalleryORCR(BuildContext context) async {
     var _pictureORCR= await picker.getImage(source: ImageSource.gallery);
     this.setState(() {
       if(_pictureORCR!=null){
@@ -94,21 +93,20 @@ class _apply extends State<Apply>{
   Future<void> _showDialogORCR(BuildContext context){
     return showDialog(context: context, builder: (BuildContext context){
       return AlertDialog(
-        title: Text("Make a Choice"),
+        title: Text("Make a Choice",style: TextStyle(fontSize: 20.5,color: Theme.of(context).primaryColor,fontWeight: FontWeight.bold),),
         content: SingleChildScrollView(
-
             child:
               ListBody(
                 children: <Widget>[
                   GestureDetector(
-                    child: Text("Galery"),
+                    child: Text("Gallery",style: TextStyle(fontSize: 15.0,fontWeight: FontWeight.w500),),
                     onTap: (){
-                      _openGaleryORCR(context);
+                      _openGalleryORCR(context);
                     },
                   ),
                   Padding(padding: EdgeInsets.all(8.0)),
                   GestureDetector(
-                    child: Text("Camera"),
+                    child: Text("Camera",style: TextStyle(fontSize: 15.0,fontWeight: FontWeight.w500),),
                     onTap: (){
                       _openCameraORCR(context);
                     },
@@ -134,14 +132,14 @@ class _apply extends State<Apply>{
               padding: EdgeInsets.all(15.0),
               child: Column(
                 children: <Widget>[
-                  Container(
-                    height: height*.15,
-                    child: Text(
-                      "Log in",
-                      style: TextStyle(fontSize: 24.0),
-                    ),
-                    alignment: Alignment.center,
-                  ),
+                  // Container(
+                  //   height: height*.15,
+                  //   child: Text(
+                  //     "Log in",
+                  //     style: TextStyle(fontSize: 24.0),
+                  //   ),
+                  //   alignment: Alignment.center,
+                  // ),
                 // SingleChildScrollView(
                 //   child:
                   Container(
@@ -276,40 +274,27 @@ class _apply extends State<Apply>{
                             Container(
                                 child: _imageFileORCR ==null? Text("Image Here"):Image.file(_imageFileORCR,width: 300.0,height: 300.0,)),
                             SizedBox(
-                              height: 10.0,
+                              height: 50.0,
                             ),
-                            Container(
-                              padding: EdgeInsets.only(left: 25.0,right: 25.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  ElevatedButton(
-                                    onPressed: null,
-                                    child: Text('Placeholder'),
-                                    style: ElevatedButton.styleFrom(
-                                      primary: Theme.of(context).primaryColor,
+
+
+                        Center(
+
+                            child:ElevatedButton(
+                              onPressed: null,
+                              child: Text('Submit'),
+                              style: ElevatedButton.styleFrom(
+                                primary: Theme.of(context).primaryColor,
                                     ),
                                   ),
-                                  ElevatedButton(
-                                    onPressed: null,
-                                    child: Text('Placeholder'),
-                                    style: ElevatedButton.styleFrom(
-                                      primary: Theme.of(context).primaryColor,
-                                    ),
-                                  ),
-                                ],
+
                               ),
-                            ),
                           ],
                         ),
                       ),
-
-                // ),
-
                 ],
               ),
             ),
-
           ),
           ],
         ),
