@@ -1,3 +1,10 @@
+import 'dart:math';
+
+import 'package:dailyrecord/signUpGetterAndSetter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+
 import 'dashframe.dart';
 import 'signup.dart';
 
@@ -6,15 +13,34 @@ import 'package:flutter/material.dart';
 class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
-    double height = MediaQuery.of(context).size.height;
+    double height = MediaQuery
+        .of(context)
+        .size
+        .height;
     final stdNo = TextEditingController(),
         password = TextEditingController(),
         email = TextEditingController();
 
+    void _signIn() async {
+      try{
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+          email: "${(logInGetterAndSetter().logInEmail).toString()}",
+          password: "${(logInGetterAndSetter().logInPassword).toString()}"
+      );
+    } on FirebaseAuthException catch (e) {
+    if (e.code == 'user-not-found') {
+    print('No user found for that email.');
+    } else if (e.code == 'wrong-password') {
+    print('Wrong password provided for that user.');
+    }
+    }
+  }
+
     void login() {
       print('Pressed!');
       if(true) {//user found
+        _signIn();
         Navigator.pop(context);
         Navigator.push(
           context,

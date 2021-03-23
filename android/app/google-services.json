@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "844104549458",
+    "project_id": "dailyrecord-e9010",
+    "storage_bucket": "dailyrecord-e9010.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844104549458:android:6d8fe09e43d1f956130b8b",
+        "android_client_info": {
+          "package_name": "ml.dailyrecord.dailyrecord"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "844104549458-5annvd9vj14u64lf4lijdut271ffh7t0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCK0bjSbIDO3lkigqFOt7t_VnTwhetWxxw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "844104549458-5annvd9vj14u64lf4lijdut271ffh7t0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

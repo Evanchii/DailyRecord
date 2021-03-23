@@ -5,20 +5,25 @@ import 'package:dailyrecord/dashframe.dart';
 import 'package:dailyrecord/signup.dart';
 import 'package:dailyrecord/user.dart';
 import 'package:dailyrecord/confirmdata.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'signup.dart';
 
-void main() {
+void main() async{
   permissionCheck();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  // BlocSupervisor.delegate = await HydratedBlocDelegate.build();
   //check if user has active session
   if(false) {
     DashFrame();
   }
 
   runApp(new MaterialApp(
-    home: Apply(),
+    home: Login(),
     theme: ThemeData(
       // Define the default brightness and colors.
       brightness: Brightness.dark,

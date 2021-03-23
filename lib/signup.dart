@@ -1,15 +1,58 @@
+
+import 'package:dailyrecord/signUpGetterAndSetter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 class SignUp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
 
+    signInGetterAndSetter getterAndSetter = new signInGetterAndSetter();
+    DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
+
     final email = TextEditingController(),
         stdNo = TextEditingController(),
         password = TextEditingController(),
         confPass = TextEditingController();
+
+
+
+    void _getterAndSetter(){
+      getterAndSetter.setEmail = email.text;
+      getterAndSetter.setStudentNumber = stdNo.text;
+      if(password.text==confPass.text){
+        getterAndSetter.setPass = password.text;
+      }else{
+        print("Wrong PASSWORD!!!!!!!!!");
+      }
+    }
+
+
+    void auth()async{
+
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: "${(getterAndSetter.Email).toString()}",
+            password: "${(getterAndSetter.Password).toString()}"
+        );
+        databaseReference.child("Students").set({
+          'Student ID':"${(getterAndSetter.studentNo).toString()}"
+        });
+        print("SUCCESSSSSS...........");
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          print('The password provided is too weak.');
+        } else if (e.code == 'email-already-in-use') {
+          print('The account already exists for that email.');
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+
+
 
     double height = MediaQuery.of(context).size.height;
 
@@ -116,7 +159,12 @@ class SignUp extends StatelessWidget {
                           height: 10,
                         ),
                         ElevatedButton(
-                          onPressed: signUp,
+                          onPressed: (){
+                            print("Click...............................");
+                            _getterAndSetter();
+                            auth();
+
+                          },
                           child: Text('Sign Up'),
                           style: ElevatedButton.styleFrom(
                             primary: Theme.of(context).accentColor,
