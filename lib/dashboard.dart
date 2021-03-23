@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 
 import 'apply.dart';
@@ -12,9 +10,6 @@ class Dashboard extends StatelessWidget {
     final double itemHeight = 100;
     final double itemWidth = MediaQuery.of(context).size.width - 100 / 2;
 
-    void b1() {}
-
-    void b2() {}
     return Scaffold(
       body: SafeArea(
         child: ListView(
