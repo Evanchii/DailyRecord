@@ -10,7 +10,7 @@ class AboutUs extends StatelessWidget {
       body: Center(
         child: Container(
           child: Text(
-            'Login Screen',
+            'About Us Screen',
             style: TextStyle(fontSize: 24.0),
           ),
         ),

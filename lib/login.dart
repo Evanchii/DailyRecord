@@ -1,6 +1,6 @@
-import 'package:dailyrecord/dashframe.dart';
-import 'package:dailyrecord/signup.dart';
-import 'package:dailyrecord/user.dart';
+import 'dashframe.dart';
+import 'signup.dart';
+
 import 'package:flutter/material.dart';
 
 class Login extends StatelessWidget {
@@ -15,6 +15,7 @@ class Login extends StatelessWidget {
     void login() {
       print('Pressed!');
       if(true) {//user found
+        Navigator.pop(context);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => DashFrame()),

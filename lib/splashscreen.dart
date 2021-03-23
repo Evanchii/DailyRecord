@@ -1,9 +1,5 @@
-import 'package:dailyrecord/dashboard.dart';
 import 'package:dailyrecord/login.dart';
 import 'package:dailyrecord/dashframe.dart';
-import 'package:dailyrecord/signup.dart';
-import 'package:dailyrecord/user.dart';
-import 'package:dailyrecord/confirmdata.dart';
 
 import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
@@ -17,7 +13,7 @@ void main() {
   }
 
   runApp(new MaterialApp(
-    home: Dashboard(),
+    home: Splashscreen(),
     theme: ThemeData(
       // Define the default brightness and colors.
       brightness: Brightness.dark,

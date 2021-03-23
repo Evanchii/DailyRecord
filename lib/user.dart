@@ -1,6 +1,8 @@
-import 'package:dailyrecord/scan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'aboutus.dart';
+import 'login.dart';
 
 class User extends StatelessWidget {
   @override
@@ -9,6 +11,10 @@ class User extends StatelessWidget {
 
     void logout() {
       Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Login())
+      );
     }
 
     return Scaffold(
@@ -171,7 +177,12 @@ class User extends StatelessWidget {
                       ),
                     ),
                     TextButton(
-                      onPressed: null,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AboutUs())
+                        );
+                      },
                       child: Text(
                         "About Us ->",
                         style: TextStyle(

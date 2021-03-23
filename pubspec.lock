@@ -170,20 +170,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
-  qr:
-    dependency: transitive
-    description:
-      name: qr
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
-  qr_flutter:
+  qrscan:
     dependency: "direct main"
     description:
-      name: qr_flutter
+      name: qrscan
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.0"
+    version: "0.2.22"
   sky_engine:
     dependency: transitive
     description: flutter

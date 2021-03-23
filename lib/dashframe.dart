@@ -1,5 +1,5 @@
+import 'package:dailyrecord/confirmdata.dart';
 import 'package:dailyrecord/dashboard.dart';
-import 'package:dailyrecord/scan.dart';
 import 'package:dailyrecord/user.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -46,7 +46,7 @@ class _DashboardState extends State {
           if(status.isGranted || status.isLimited)
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Scan(),),
+              MaterialPageRoute(builder: (context) => ConfirmData(),),
             );
           else
             Permission.camera.request();
