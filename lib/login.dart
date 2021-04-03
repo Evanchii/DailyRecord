@@ -2,8 +2,6 @@ import 'dart:math';
 
 import 'package:dailyrecord/signUpGetterAndSetter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-
 
 import 'dashframe.dart';
 import 'signup.dart';
@@ -13,33 +11,31 @@ import 'package:flutter/material.dart';
 class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery
-        .of(context)
-        .size
-        .height;
+    double height = MediaQuery.of(context).size.height;
     final stdNo = TextEditingController(),
         password = TextEditingController(),
         email = TextEditingController();
 
     void _signIn() async {
-      try{
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-          email: "${(logInGetterAndSetter().logInEmail).toString()}",
-          password: "${(logInGetterAndSetter().logInPassword).toString()}"
-      );
-    } on FirebaseAuthException catch (e) {
-    if (e.code == 'user-not-found') {
-    print('No user found for that email.');
-    } else if (e.code == 'wrong-password') {
-    print('Wrong password provided for that user.');
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+                email: "${(logInGetterAndSetter().logInEmail).toString()}",
+                password:
+                    "${(logInGetterAndSetter().logInPassword).toString()}");
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'user-not-found') {
+          print('No user found for that email.');
+        } else if (e.code == 'wrong-password') {
+          print('Wrong password provided for that user.');
+        }
+      }
     }
-    }
-  }
 
     void login() {
       print('Pressed!');
-      if(true) {//user found
+      if (true) {
+        //user found
         _signIn();
         Navigator.pop(context);
         Navigator.push(
@@ -72,23 +68,27 @@ class Login extends StatelessWidget {
               padding: EdgeInsets.all(15),
               child: Column(
                 children: <Widget>[
-                  Container(//for logo
-                    height: height*.15,
+                  Container(
+                    //for logo
+                    height: height * .15,
                     child: Center(
                       child: Text('Placeholder'),
                     ),
                   ),
-                  Container(//form
+                  Container(
+                    //form
                     alignment: Alignment.center,
-                    height: height*.60,
+                    height: height * .60,
                     child: Column(
                       children: <Widget>[
                         Center(
-                          child:Text(
+                          child: Text(
                             'Log in',
-                            style: TextStyle(fontSize: 24.0,
+                            style: TextStyle(
+                                fontSize: 24.0,
                                 fontWeight: FontWeight.bold,
-                                color: Theme.of(context).primaryColor),),
+                                color: Theme.of(context).primaryColor),
+                          ),
                         ),
                         SizedBox(
                           height: 20,
@@ -101,8 +101,7 @@ class Login extends StatelessWidget {
                             filled: true,
                             hintStyle: TextStyle(
                                 color: Colors.grey,
-                                decorationColor: Colors.white
-                            ),
+                                decorationColor: Colors.white),
                           ),
                           cursorColor: Theme.of(context).accentColor,
                         ),
@@ -116,8 +115,8 @@ class Login extends StatelessWidget {
                             fillColor: Color(0x66B6B6B6),
                             filled: true,
                             hintStyle: TextStyle(
-                                color: Colors.grey,
-                                decorationColor: Colors.white,
+                              color: Colors.grey,
+                              decorationColor: Colors.white,
                             ),
                           ),
                           cursorColor: Theme.of(context).accentColor,
@@ -151,10 +150,10 @@ class Login extends StatelessWidget {
                     ),
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignUp()),
+                        context,
+                        MaterialPageRoute(builder: (context) => SignUp()),
                       );
-                      },
+                    },
                   ),
                 ],
               ),

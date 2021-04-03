@@ -1,14 +1,12 @@
-
 import 'package:dailyrecord/signUpGetterAndSetter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-class SignUp extends StatelessWidget {
 
+class SignUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     signInGetterAndSetter getterAndSetter = new signInGetterAndSetter();
     DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
 
@@ -17,42 +15,46 @@ class SignUp extends StatelessWidget {
         password = TextEditingController(),
         confPass = TextEditingController();
 
-
-
-    void _getterAndSetter(){
+    void _getterAndSetter() {
       getterAndSetter.setEmail = email.text;
       getterAndSetter.setStudentNumber = stdNo.text;
-      if(password.text==confPass.text){
+      if (password.text == confPass.text) {
         getterAndSetter.setPass = password.text;
-      }else{
-        print("Wrong PASSWORD!!!!!!!!!");
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Password Doesn't match!")));
       }
     }
 
+    Future<bool> rootFirebaseIsExists(DatabaseReference databaseReference) async{
+      DataSnapshot snapshot = await databaseReference.once();
+      return snapshot !=null;
+    }
 
-    void auth()async{
-
+    void auth() async {
       try {
-        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: "${(getterAndSetter.Email).toString()}",
-            password: "${(getterAndSetter.Password).toString()}"
-        );
-        databaseReference.child("Students").set({
-          'Student ID':"${(getterAndSetter.studentNo).toString()}"
-        });
-        print("SUCCESSSSSS...........");
+        if(rootFirebaseIsExists(databaseReference.child("student").child("${(getterAndSetter.studentNo).toString()}"))!=null) {
+          await FirebaseAuth.instance
+              .createUserWithEmailAndPassword(
+                  email: "${(getterAndSetter.Email).toString()}",
+                  password: "${(getterAndSetter.Password).toString()}");
+          databaseReference.child("student").child("${(getterAndSetter.studentNo).toString()}").set({'email': "${(getterAndSetter.email).toString()}"});
+          databaseReference.child("student").child("${(getterAndSetter.studentNo).toString()}").set({'usertype': "student"});
+          databaseReference.child("student").child("${(getterAndSetter.studentNo).toString()}").set({'park': false});
+          print("SUCCESSSSSS...........");
+        }
+        else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Student ID already exists")));
+        }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
-          print('The password provided is too weak.');
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("The password provided is too weak")));
         } else if (e.code == 'email-already-in-use') {
-          print('The account already exists for that email.');
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("The account already exists for that email.")));
         }
       } catch (e) {
         print(e);
       }
     }
-
-
 
     double height = MediaQuery.of(context).size.height;
 
@@ -73,21 +75,23 @@ class SignUp extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    height: height*.15,
+                    height: height * .15,
                     child: Center(
                       child: Text('Placeholder'),
                     ),
                   ),
                   Container(
-                    height: height*.60 < 328.0 ? 328.0 : height*.60,
+                    height: height * .60 < 328.0 ? 328.0 : height * .60,
                     child: Column(
                       children: <Widget>[
                         Center(
-                          child:Text(
+                          child: Text(
                             'Sign up',
-                            style: TextStyle(fontSize: 24.0,
+                            style: TextStyle(
+                                fontSize: 24.0,
                                 fontWeight: FontWeight.bold,
-                                color: Theme.of(context).primaryColor),),
+                                color: Theme.of(context).primaryColor),
+                          ),
                         ),
                         SizedBox(
                           height: 20,
@@ -100,8 +104,7 @@ class SignUp extends StatelessWidget {
                             filled: true,
                             hintStyle: TextStyle(
                                 color: Colors.grey,
-                                decorationColor: Colors.white
-                            ),
+                                decorationColor: Colors.white),
                           ),
                           cursorColor: Theme.of(context).accentColor,
                         ),
@@ -159,11 +162,10 @@ class SignUp extends StatelessWidget {
                           height: 10,
                         ),
                         ElevatedButton(
-                          onPressed: (){
+                          onPressed: () {
                             print("Click...............................");
                             _getterAndSetter();
                             auth();
-
                           },
                           child: Text('Sign Up'),
                           style: ElevatedButton.styleFrom(

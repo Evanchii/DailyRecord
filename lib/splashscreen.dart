@@ -1,24 +1,18 @@
-import 'package:dailyrecord/apply.dart';
-import 'package:dailyrecord/dashboard.dart';
 import 'package:dailyrecord/login.dart';
 import 'package:dailyrecord/dashframe.dart';
-import 'package:dailyrecord/signup.dart';
-import 'package:dailyrecord/user.dart';
-import 'package:dailyrecord/confirmdata.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'signup.dart';
 
 void main() async{
   permissionCheck();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // BlocSupervisor.delegate = await HydratedBlocDelegate.build();
   //check if user has active session
-  if(false) {
+  if(FirebaseAuth.instance.currentUser!=null) {
     DashFrame();
   }
 
@@ -29,7 +23,7 @@ void main() async{
       brightness: Brightness.dark,
       primaryColor: Color(0xffffd84d),
       accentColor: Color(0xffF7971D),
-
+      backgroundColor: Colors.grey[2000],
       // Define the default font family.
       // fontFamily: 'Georgia',
 
@@ -61,8 +55,8 @@ class _SplashscreenState extends State<Splashscreen> {
   Widget build(BuildContext context) {
     return SplashScreen(
       seconds: 15,
-      backgroundColor: Color(0xff000000),
-      image: Image.network("https://myenglishmatters.com/wp-content/uploads/2020/11/placeholder.png"),
+      backgroundColor: Theme.of(context).backgroundColor,
+      image: Image.asset("assets/logo.png"),
       loaderColor: Color(0xffffffff),
       photoSize: 150.00,
       navigateAfterSeconds: Login(),

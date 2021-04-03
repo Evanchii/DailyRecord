@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 class AreaList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
     final String desc = ModalRoute.of(context).settings.arguments;
 
-    double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      // change backgroundColor here
-      backgroundColor: const Color(0xFF001011),
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
         child: ListView(
           children: [
@@ -17,16 +16,11 @@ class AreaList extends StatelessWidget {
               child: Column(
                 children: [
                   Container(
-                    decoration: BoxDecoration(color: const Color(0xFFFDCA40)),
                     height: height * .15,
                     child: Center(
                       child: Text(
-                        'Placeholder Logo',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                        'Placeholder',
+                        style: TextStyle(fontSize: 24.0),
                       ),
                     ),
                   ),
