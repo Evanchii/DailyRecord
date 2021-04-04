@@ -16,7 +16,7 @@ class _LoginState extends State {
       password = TextEditingController(),
       email = TextEditingController();
 
-  String email3;
+  String strEmail;
 
   DatabaseReference dbRef = FirebaseDatabase().reference();
 
@@ -28,27 +28,28 @@ class _LoginState extends State {
     super.dispose();
   }
 
-  Future checkUser() async {
+  Future<String> checkUser() async {
     await dbRef.child('student').child(stdNo.text).child('email').once().then((DataSnapshot data){
       print('std'+data.value);
       if(data.value != null) {
-        email3 = data.value;
+        strEmail = data.value;
       }
     });
     await dbRef.child('faculty').child(stdNo.text).child('email').once().then((DataSnapshot data){
       // print('fac'+data.value);
       if(data.value != null) {
         print('fac: true');
-        email3 = data.value;
+        strEmail = data.value;
       }
     });
     await dbRef.child('admin').child(stdNo.text).child('email').once().then((DataSnapshot data){
       // print('ad'+data.value);
       if(data.value != null) {
         print('ad: true');
-        email3 = data.value;
+        strEmail = data.value;
       }
     });
+    return null;
   }
 
   void login() async {
@@ -56,11 +57,11 @@ class _LoginState extends State {
     print('ID/PW\t'+stdNo.text+'\t'+password.text);
     if (stdNo.text.isNotEmpty && password.text.isNotEmpty) {
       await checkUser();
-      if(email3.isNotEmpty) {
+      if(strEmail.isNotEmpty) {
         try {
           await FirebaseAuth.instance
               .signInWithEmailAndPassword(
-              email: email3.toString(),
+              email: strEmail.toString(),
               password: password.text);
           Navigator.pop(context);
           Navigator.push(
