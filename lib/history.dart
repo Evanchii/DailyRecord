@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 class History extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      // change backgroundColor here
-      backgroundColor: Theme.of(context).backgroundColor,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).backgroundColor,
+        title: Image(
+            image: AssetImage('assets/banner.png'),
+            height: 50,
+        ),
+      ),
       body: SafeArea(
         child: ListView(
           children: [
@@ -15,15 +19,6 @@ class History extends StatelessWidget {
               padding: EdgeInsets.all(15),
               child: Column(
                 children: [
-                  Container(
-                    height: height * .15,
-                    child: Center(
-                      child: Text(
-                        'Placeholder',
-                        style: TextStyle(fontSize: 24.0),
-                      ),
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Container(

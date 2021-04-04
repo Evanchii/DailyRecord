@@ -222,7 +222,11 @@ class _ApplyState extends State<Apply> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Placeholder'),
+        backgroundColor: Theme.of(context).backgroundColor,
+        title: Image(
+          image: AssetImage('assets/banner.png'),
+          height: 50,
+        ),
       ),
       body: ListView(
         children: <Widget>[

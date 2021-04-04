@@ -18,10 +18,10 @@ class Dashboard extends StatelessWidget {
               padding: EdgeInsets.all(15),
               child: Column(
                 children: <Widget>[
-                  Center(
-                    child: Text(
-                      'DailyRecord',
-                      style: TextStyle(fontSize: 25),
+                  Container(
+                    child: Image(
+                      image: AssetImage('assets/banner.png'),
+                      height: 50,
                     ),
                   ),
                   Padding(

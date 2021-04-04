@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,7 @@ class User extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
 
     void logout() {
+      FirebaseAuth.instance.signOut();
       Navigator.pop(context);
       Navigator.push(
         context,
@@ -26,9 +28,9 @@ class User extends StatelessWidget {
               Container(
                 height: height * .15,
                 child: Center(
-                  child: Text(
-                    'Placeholder',
-                    style: TextStyle(fontSize: 24.0),
+                  child: Image(
+                    image: AssetImage('assets/banner.png'),
+                    height: 50,
                   ),
                 ),
               ),

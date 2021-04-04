@@ -1,4 +1,3 @@
-import 'package:dailyrecord/signUpGetterAndSetter.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -10,7 +9,8 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   bool exist;
-  DatabaseReference databaseReference = FirebaseDatabase.instance.reference().child("student");
+  DatabaseReference dbRef =
+      FirebaseDatabase.instance.reference().child("student");
   TextEditingController email = TextEditingController(),
       stdNo = TextEditingController(),
       password = TextEditingController(),
@@ -25,46 +25,39 @@ class _SignUpState extends State<SignUp> {
     super.dispose();
   }
 
-  Future<bool> rootFirebaseIsExists(DatabaseReference databaseReference) async {
-    DataSnapshot snapshot = await databaseReference.once();
+  Future<bool> rootFirebaseIsExists(DatabaseReference dbRef) async {
+    DataSnapshot snapshot = await dbRef.once();
     return snapshot != null;
+  }
+
+  bool checkUser() {
+    dbRef.child('email').once().then((DataSnapshot data) {
+      if (data != null) return true;
+    });
+    return false;
   }
 
   void signUp() async {
     FocusScope.of(context).unfocus();
     print('hi');
-    if (email.text != null &&
-        stdNo.text != null &&
-        password.text != null &&
-        confPass.text != null) {
+    if (email.text.isNotEmpty &&
+        stdNo.text.isNotEmpty &&
+        password.text.isNotEmpty &&
+        confPass.text.isNotEmpty) {
       print('2');
-      print(password.text+"\n"+confPass.text);
+      print(password.text + "\n" + confPass.text);
       if (password.text == confPass.text) {
-        print('3');
         try {
-          await databaseReference.child(stdNo.text).child("email").once().then((DataSnapshot data) {
-            print(data.value);
-            exist = data.value != null;
-            print("AAA "+exist.toString());
-            print(exist);
-            if(!exist) {
-              FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: email.text, password: password.text);
-              print(email.text+'\t'+stdNo.text+'\t'+password.text);
-              databaseReference
-                  .child(stdNo.text)
-                  .set({'usertype': "student"});
-              databaseReference
-                  .child("${stdNo.text}")
-                  .set({'park': false});
-              databaseReference
-                  .child(stdNo.text)
-                  .set({'email': email.text});
-              Navigator.pop(context);
-            } else
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text("Student ID is in use")));
-          });
+          if (!checkUser()) {
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                email: email.text, password: password.text);
+            print(email.text + '\t' + stdNo.text + '\t' + password.text);
+            dbRef.child(stdNo.text).set(
+                {'userType': "student", 'park': false, 'email': email.text});
+            Navigator.pop(context);
+          } else
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text("Student ID is in use")));
         } on FirebaseAuthException catch (e) {
           if (e.code == 'weak-password') {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -98,14 +91,15 @@ class _SignUpState extends State<SignUp> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  // Container(
+                  //   height: height * .15,
+                  //   child: Center(
+                  //     child: Text('Placeholder'),
+                  //   ),
+                  // ),
                   Container(
-                    height: height * .15,
-                    child: Center(
-                      child: Text('Placeholder'),
-                    ),
-                  ),
-                  Container(
-                    height: height * .60 < 328.0 ? 328.0 : height * .60,
+                    padding: EdgeInsets.only(top: height * .15),
+                    height: height * .80 < 328.0 ? 328.0 : height * .80,
                     child: Column(
                       children: <Widget>[
                         Center(

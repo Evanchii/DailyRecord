@@ -1,7 +1,5 @@
-import 'dart:math';
-
-import 'package:dailyrecord/signUpGetterAndSetter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 import 'dashframe.dart';
 import 'signup.dart';
@@ -18,6 +16,10 @@ class _LoginState extends State {
       password = TextEditingController(),
       email = TextEditingController();
 
+  String email3;
+
+  DatabaseReference dbRef = FirebaseDatabase().reference();
+
   @override
   void dispose() {
     email.dispose();
@@ -26,32 +28,63 @@ class _LoginState extends State {
     super.dispose();
   }
 
-  @override
-  void _signIn() async {
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: "${(logInGetterAndSetter().logInEmail).toString()}",
-              password: "${(logInGetterAndSetter().logInPassword).toString()}");
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+  Future checkUser() async {
+    await dbRef.child('student').child(stdNo.text).child('email').once().then((DataSnapshot data){
+      print('std'+data.value);
+      if(data.value != null) {
+        email3 = data.value;
       }
-    }
+    });
+    await dbRef.child('faculty').child(stdNo.text).child('email').once().then((DataSnapshot data){
+      // print('fac'+data.value);
+      if(data.value != null) {
+        print('fac: true');
+        email3 = data.value;
+      }
+    });
+    await dbRef.child('admin').child(stdNo.text).child('email').once().then((DataSnapshot data){
+      // print('ad'+data.value);
+      if(data.value != null) {
+        print('ad: true');
+        email3 = data.value;
+      }
+    });
   }
 
-  void login() {
+  void login() async {
     print('Pressed!');
-    if (true) {
-
-      _signIn();
-      Navigator.pop(context);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => DashFrame()),
-      );
+    print('ID/PW\t'+stdNo.text+'\t'+password.text);
+    if (stdNo.text.isNotEmpty && password.text.isNotEmpty) {
+      await checkUser();
+      if(email3.isNotEmpty) {
+        try {
+          await FirebaseAuth.instance
+              .signInWithEmailAndPassword(
+              email: email3.toString(),
+              password: password.text);
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => DashFrame()),
+          );
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'user-not-found') {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("User not found!")));
+          } else if (e.code == 'wrong-password') {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Wrong password!")));
+          }
+        }
+      }
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("User not found!")));
+      }
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Please provide all needed information")));
     }
   }
 
@@ -73,7 +106,6 @@ class _LoginState extends State {
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[2000],
       body: SafeArea(
         child: ListView(
           children: <Widget>[
@@ -81,17 +113,20 @@ class _LoginState extends State {
               padding: EdgeInsets.all(15),
               child: Column(
                 children: <Widget>[
-                  Container(
-                    //for logo
-                    height: height * .15,
-                    child: Center(
-                      child: Text('Placeholder'),
-                    ),
-                  ),
+                  // Container(
+                  //   //for logo
+                  //   height: height * .15,
+                  //   child: Center(
+                  //     child: Image(
+                  //       image: AssetImage('assets/banner.png'),
+                  //     )
+                  //   ),
+                  // ),
                   Container(
                     //form
+                    padding: EdgeInsets.only(top: height * .15),
                     alignment: Alignment.center,
-                    height: height * .60,
+                    height: height*.80,
                     child: Column(
                       children: <Widget>[
                         Center(
@@ -104,7 +139,7 @@ class _LoginState extends State {
                           ),
                         ),
                         SizedBox(
-                          height: 20,
+                          height: 30,
                         ),
                         TextField(
                           controller: stdNo,

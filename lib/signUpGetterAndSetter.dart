@@ -1,34 +1,36 @@
-class signInGetterAndSetter{
-  String email;
+//TO BE REMOVED. DECISION PENDING!
+
+class SignInGetterAndSetter{
+  String strEmail;
   String studentNo;
-  String password;
+  String strPassword;
 
 
-  String get Email{
-    return email;
+  String get email{
+    return strEmail;
   }
 
-  String get StudentNumber{
+  String get studentNumber{
     return studentNo;
   }
 
-  String get Password{
-    return password;
+  String get password{
+    return strPassword;
   }
 
-  void set setEmail(String setEmail){
-    this.email = setEmail;
+  set setEmail(String setEmail){
+    this.strEmail = setEmail;
   }
-  void set setStudentNumber(String setStudentNumber){
+  set setStudentNumber(String setStudentNumber){
     this.studentNo = setStudentNumber;
   }
-  void set setPass(String setPassword){
-    this.password = setPassword;
+  set setPass(String setPassword){
+    this.strPassword = setPassword;
   }
 }
 
 
-class logInGetterAndSetter{
+class LogInGetterAndSetter{
   String logEmail;
   String logPassword;
 
@@ -38,10 +40,10 @@ class logInGetterAndSetter{
   String get logInPassword{
     return logPassword;
   }
-  void set setLogEmail(String setEmail){
+  set setLogEmail(String setEmail){
     this.logEmail = setEmail;
   }
-  void set setLogPassword(String setPassword){
+  set setLogPassword(String setPassword){
     this.logPassword = setPassword;
   }
 }
