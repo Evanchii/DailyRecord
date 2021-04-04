@@ -8,42 +8,55 @@ import 'signup.dart';
 
 import 'package:flutter/material.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
   @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State {
+  final stdNo = TextEditingController(),
+      password = TextEditingController(),
+      email = TextEditingController();
+
+  @override
+  void dispose() {
+    email.dispose();
+    stdNo.dispose();
+    password.dispose();
+    super.dispose();
+  }
+
+  @override
+  void _signIn() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: "${(logInGetterAndSetter().logInEmail).toString()}",
+              password: "${(logInGetterAndSetter().logInPassword).toString()}");
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+  }
+
+  void login() {
+    print('Pressed!');
+    if (true) {
+
+      _signIn();
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => DashFrame()),
+      );
+    }
+  }
+
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    final stdNo = TextEditingController(),
-        password = TextEditingController(),
-        email = TextEditingController();
-
-    void _signIn() async {
-      try {
-        UserCredential userCredential = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(
-                email: "${(logInGetterAndSetter().logInEmail).toString()}",
-                password:
-                    "${(logInGetterAndSetter().logInPassword).toString()}");
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'user-not-found') {
-          print('No user found for that email.');
-        } else if (e.code == 'wrong-password') {
-          print('Wrong password provided for that user.');
-        }
-      }
-    }
-
-    void login() {
-      print('Pressed!');
-      if (true) {
-        //user found
-        _signIn();
-        Navigator.pop(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => DashFrame()),
-        );
-      }
-    }
 
     void forgotPassword() async {
       return showDialog(

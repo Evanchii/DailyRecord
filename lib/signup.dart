@@ -1,67 +1,91 @@
 import 'package:dailyrecord/signUpGetterAndSetter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-class SignUp extends StatelessWidget {
+class SignUp extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    signInGetterAndSetter getterAndSetter = new signInGetterAndSetter();
-    DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
+  _SignUpState createState() => _SignUpState();
+}
 
-    final email = TextEditingController(),
-        stdNo = TextEditingController(),
-        password = TextEditingController(),
-        confPass = TextEditingController();
+class _SignUpState extends State<SignUp> {
+  bool exist;
+  DatabaseReference databaseReference = FirebaseDatabase.instance.reference().child("student");
+  TextEditingController email = TextEditingController(),
+      stdNo = TextEditingController(),
+      password = TextEditingController(),
+      confPass = TextEditingController();
 
-    void _getterAndSetter() {
-      getterAndSetter.setEmail = email.text;
-      getterAndSetter.setStudentNumber = stdNo.text;
+  @override
+  void dispose() {
+    email.dispose();
+    stdNo.dispose();
+    password.dispose();
+    confPass.dispose();
+    super.dispose();
+  }
+
+  Future<bool> rootFirebaseIsExists(DatabaseReference databaseReference) async {
+    DataSnapshot snapshot = await databaseReference.once();
+    return snapshot != null;
+  }
+
+  void signUp() async {
+    FocusScope.of(context).unfocus();
+    print('hi');
+    if (email.text != null &&
+        stdNo.text != null &&
+        password.text != null &&
+        confPass.text != null) {
+      print('2');
+      print(password.text+"\n"+confPass.text);
       if (password.text == confPass.text) {
-        getterAndSetter.setPass = password.text;
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Password Doesn't match!")));
-      }
-    }
-
-    Future<bool> rootFirebaseIsExists(DatabaseReference databaseReference) async{
-      DataSnapshot snapshot = await databaseReference.once();
-      return snapshot !=null;
-    }
-
-    void auth() async {
-      try {
-        if(rootFirebaseIsExists(databaseReference.child("student").child("${(getterAndSetter.studentNo).toString()}"))!=null) {
-          await FirebaseAuth.instance
-              .createUserWithEmailAndPassword(
-                  email: "${(getterAndSetter.Email).toString()}",
-                  password: "${(getterAndSetter.Password).toString()}");
-          databaseReference.child("student").child("${(getterAndSetter.studentNo).toString()}").set({'email': "${(getterAndSetter.email).toString()}"});
-          databaseReference.child("student").child("${(getterAndSetter.studentNo).toString()}").set({'usertype': "student"});
-          databaseReference.child("student").child("${(getterAndSetter.studentNo).toString()}").set({'park': false});
-          print("SUCCESSSSSS...........");
+        print('3');
+        try {
+          await databaseReference.child(stdNo.text).child("email").once().then((DataSnapshot data) {
+            print(data.value);
+            exist = data.value != null;
+            print("AAA "+exist.toString());
+            print(exist);
+            if(!exist) {
+              FirebaseAuth.instance.createUserWithEmailAndPassword(
+                  email: email.text, password: password.text);
+              print(email.text+'\t'+stdNo.text+'\t'+password.text);
+              databaseReference
+                  .child(stdNo.text)
+                  .set({'usertype': "student"});
+              databaseReference
+                  .child("${stdNo.text}")
+                  .set({'park': false});
+              databaseReference
+                  .child(stdNo.text)
+                  .set({'email': email.text});
+              Navigator.pop(context);
+            } else
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text("Student ID is in use")));
+          });
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'weak-password') {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("The password provided is too weak")));
+          } else if (e.code == 'email-already-in-use') {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text("The account already exists for that email.")));
+          }
+        } catch (e) {
+          print(e);
         }
-        else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Student ID already exists")));
-        }
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'weak-password') {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("The password provided is too weak")));
-        } else if (e.code == 'email-already-in-use') {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("The account already exists for that email.")));
-        }
-      } catch (e) {
-        print(e);
-      }
-    }
+      } else
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Passwords must match!")));
+    } else
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Please provide all needed information")));
+  }
 
+  Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-
-    void signUp() {
-      //insert codes here
-      Navigator.pop(context);
-    }
 
     return Scaffold(
       body: SafeArea(
@@ -162,11 +186,7 @@ class SignUp extends StatelessWidget {
                           height: 10,
                         ),
                         ElevatedButton(
-                          onPressed: () {
-                            print("Click...............................");
-                            _getterAndSetter();
-                            auth();
-                          },
+                          onPressed: signUp,
                           child: Text('Sign Up'),
                           style: ElevatedButton.styleFrom(
                             primary: Theme.of(context).accentColor,
