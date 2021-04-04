@@ -13,7 +13,7 @@ void main() async {
   await Firebase.initializeApp();
   //check if user has active session
 
-  if (FirebaseAuth.instance.currentUser.uid.isNotEmpty) {
+  if (FirebaseAuth.instance.currentUser != null) {
     runApp(new MaterialApp(
       home: DashFrame(),
       theme: ThemeData(

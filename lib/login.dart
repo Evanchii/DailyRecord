@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'dashframe.dart';
 import 'signup.dart';
@@ -12,6 +13,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State {
+  bool fail = false;
   final stdNo = TextEditingController(),
       password = TextEditingController(),
       email = TextEditingController();
@@ -29,22 +31,35 @@ class _LoginState extends State {
   }
 
   Future<String> checkUser() async {
-    await dbRef.child('student').child(stdNo.text).child('email').once().then((DataSnapshot data){
-      print('std'+data.value);
-      if(data.value != null) {
+    await dbRef
+        .child('student')
+        .child(stdNo.text)
+        .child('email')
+        .once()
+        .then((DataSnapshot data) {
+      print('std' + data.value);
+      if (data.value != null) {
         strEmail = data.value;
       }
     });
-    await dbRef.child('faculty').child(stdNo.text).child('email').once().then((DataSnapshot data){
-      // print('fac'+data.value);
-      if(data.value != null) {
+    await dbRef
+        .child('faculty')
+        .child(stdNo.text)
+        .child('email')
+        .once()
+        .then((DataSnapshot data) {
+      if (data.value != null) {
         print('fac: true');
         strEmail = data.value;
       }
     });
-    await dbRef.child('admin').child(stdNo.text).child('email').once().then((DataSnapshot data){
-      // print('ad'+data.value);
-      if(data.value != null) {
+    await dbRef
+        .child('admin')
+        .child(stdNo.text)
+        .child('email')
+        .once()
+        .then((DataSnapshot data) {
+      if (data.value != null) {
         print('ad: true');
         strEmail = data.value;
       }
@@ -53,39 +68,78 @@ class _LoginState extends State {
   }
 
   void login() async {
+    FocusScope.of(context).unfocus();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: new Container(
+            height: 100,
+            padding: EdgeInsets.all(15),
+            child: new Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                new CircularProgressIndicator(),
+                new SizedBox(
+                  width: 15,
+                ),
+                new Text("Logging in..."),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
     print('Pressed!');
-    print('ID/PW\t'+stdNo.text+'\t'+password.text);
+    print('ID/PW\t' + stdNo.text + '\t' + password.text);
     if (stdNo.text.isNotEmpty && password.text.isNotEmpty) {
       await checkUser();
-      if(strEmail.isNotEmpty) {
+      if (strEmail.isNotEmpty) {
         try {
-          await FirebaseAuth.instance
-              .signInWithEmailAndPassword(
-              email: strEmail.toString(),
-              password: password.text);
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+              email: strEmail.toString(), password: password.text);
+          Navigator.pop(context);
           Navigator.pop(context);
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => DashFrame()),
           );
         } on FirebaseAuthException catch (e) {
+          Navigator.pop(context);
           if (e.code == 'user-not-found') {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("User not found!")));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text("User not found!")));
           } else if (e.code == 'wrong-password') {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Wrong password!")));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text("Wrong password!")));
           }
         }
+      } else {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("User not found!")));
       }
-      else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("User not found!")));
-      }
-    }
-    else {
+    } else {
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Please provide all needed information")));
+    }
+  }
+
+  void success() {
+    if(!fail) {
+      print('1');
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Email has been sent!")));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  "Email Address does not exists!")));
     }
   }
 
@@ -97,10 +151,33 @@ class _LoginState extends State {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text('Forgot password'),
-              content: TextField(
-                controller: email,
-                decoration: InputDecoration(hintText: "Email Address"),
+              title: Text(
+                'Forgot password',
+                style: TextStyle(fontSize: 20, fontStyle: FontStyle.normal),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: email,
+                    decoration: InputDecoration(hintText: "Email Address"),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        FocusScope.of(context).unfocus();
+                        fail = false;
+                        print('1');
+                        FirebaseAuth.instance
+                            .sendPasswordResetEmail(email: email.text)
+                            .onError((error, stackTrace) => fail = true)
+                            .whenComplete(() => success());
+                      },
+                    ),
+                  ),
+                ],
               ),
             );
           });
@@ -114,20 +191,11 @@ class _LoginState extends State {
               padding: EdgeInsets.all(15),
               child: Column(
                 children: <Widget>[
-                  // Container(
-                  //   //for logo
-                  //   height: height * .15,
-                  //   child: Center(
-                  //     child: Image(
-                  //       image: AssetImage('assets/banner.png'),
-                  //     )
-                  //   ),
-                  // ),
                   Container(
                     //form
                     padding: EdgeInsets.only(top: height * .15),
                     alignment: Alignment.center,
-                    height: height*.80,
+                    height: height * .80,
                     child: Column(
                       children: <Widget>[
                         Center(

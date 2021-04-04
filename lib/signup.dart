@@ -39,6 +39,30 @@ class _SignUpState extends State<SignUp> {
 
   void signUp() async {
     FocusScope.of(context).unfocus();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: new Container(
+            height: 100,
+            padding: EdgeInsets.all(15),
+            child: new Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                new CircularProgressIndicator(),
+                new SizedBox(
+                  width: 15,
+                ),
+                new Text("Signing up..."),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
     print('hi');
     if (email.text.isNotEmpty &&
         stdNo.text.isNotEmpty &&
@@ -55,10 +79,12 @@ class _SignUpState extends State<SignUp> {
             dbRef.child(stdNo.text).set(
                 {'userType': "student", 'park': false, 'email': email.text});
             Navigator.pop(context);
+            Navigator.pop(context);
           } else
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text("Student ID is in use")));
         } on FirebaseAuthException catch (e) {
+          Navigator.pop(context);
           if (e.code == 'weak-password') {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text("The password provided is too weak")));
@@ -67,14 +93,19 @@ class _SignUpState extends State<SignUp> {
                 content: Text("The account already exists for that email.")));
           }
         } catch (e) {
+          Navigator.pop(context);
           print(e);
         }
-      } else
+      } else {
+        Navigator.pop(context);
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Passwords must match!")));
-    } else
+      }
+    } else {
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Please provide all needed information")));
+    }
   }
 
   Widget build(BuildContext context) {
