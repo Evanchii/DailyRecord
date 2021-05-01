@@ -1,10 +1,69 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'apply.dart';
 import 'arealist.dart';
 import 'history.dart';
 
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
+  @override
+  _DashboardState createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
+  DatabaseReference dbRef = FirebaseDatabase().reference();
+  String uid = "LOADING", type = "NULL";
+  int space = 0;
+  bool ins = false, admin = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    getData();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      getData();
+    }
+  }
+
+  void getData() async {
+    space = (await FirebaseDatabase.instance
+            .reference()
+            .child("admin/parkingSpace")
+            .once())
+        .value;
+    type = (await FirebaseDatabase.instance
+            .reference()
+            .child(
+                "users/" + FirebaseAuth.instance.currentUser.uid + "/userType")
+            .once())
+        .value;
+    setState(() {
+      uid = FirebaseAuth.instance.currentUser.displayName;
+      if (type == "instructor") {
+        ins = true;
+        admin = false;
+      } else if (type == "admin") {
+        ins = true;
+        admin = true;
+      } else {
+        ins = false;
+        admin = false;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final double itemHeight = 100;
@@ -33,14 +92,18 @@ class Dashboard extends StatelessWidget {
                         width: 375.0,
                         height: 140.0,
                         decoration: BoxDecoration(
-                          color: Color(0xffF7971D),
-                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                          color: Color(0x90404040),
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
                         child: FittedBox(
                           fit: BoxFit.contain,
                           child: Center(
                             child: Text(
-                              "Welcome, %USER%! \n\nCurrently, there are %amount% parking\nspaces left in PHINMA UPANG",
+                              "Welcome, " +
+                                  uid +
+                                  "! \n\nCurrently, there are " +
+                                  space.toString() +
+                                  " parking\nspaces left in PHINMA UPANG",
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -75,41 +138,49 @@ class Dashboard extends StatelessWidget {
                             },
                             child: Text('History')),
                         ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Apply()
-                                ),
-                              );
-                            },
-                            child: Text('Apply Parking\nSpace')),
-                        ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AreaList(),
-                                  settings: RouteSettings(
-                                    arguments: "AdminHis",
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Apply()),
+                            );
+                          },
+                          child: Text(
+                            'Apply Parking\nSpace',
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Visibility(
+                          visible: ins,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AreaList(),
+                                    settings: RouteSettings(
+                                      arguments: "AdminHis",
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                            child: Text('Admin\nHistory')),
-                        ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AreaList(),
-                                  settings: RouteSettings(
-                                    arguments: "CapCtrl",
+                                );
+                              },
+                              child: Text('Admin\nHistory', textAlign: TextAlign.center,)),
+                        ),
+                        Visibility(
+                          visible: admin,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AreaList(),
+                                    settings: RouteSettings(
+                                      arguments: "CapCtrl",
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                            child: Text('Capacity\nLimit')),
+                                );
+                              },
+                              child: Text('Capacity\nLimit', textAlign: TextAlign.center,)),
+                        ),
                       ],
                     ),
                   ),
