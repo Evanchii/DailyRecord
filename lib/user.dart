@@ -1,11 +1,56 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'aboutus.dart';
 import 'login.dart';
 
-class User extends StatelessWidget {
+class User extends StatefulWidget {
+  @override
+  _UserState createState() => _UserState();
+}
+
+class _UserState extends State<User> with WidgetsBindingObserver {
+
+  DatabaseReference dbRef = FirebaseDatabase.instance.reference();
+  String fName, lName, bDay, address;
+
+  TextEditingController currPassword = TextEditingController(),
+  newPassword = TextEditingController(),
+  confPassword = TextEditingController();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    getData();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      getData();
+    }
+  }
+
+  void getData() async {
+    var uid = FirebaseAuth.instance.currentUser.uid;
+    fName = (await FirebaseDatabase.instance.reference().child("user/"+uid+"/fName").once()).value;
+    lName = (await FirebaseDatabase.instance.reference().child("user/"+uid+"/lName").once()).value;
+    bDay = (await FirebaseDatabase.instance.reference().child("user/"+uid+"/bDay").once()).value;
+    address = (await FirebaseDatabase.instance.reference().child("user/"+uid+"/address").once()).value;
+    setState((){
+      print('Hello World');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -14,8 +59,8 @@ class User extends StatelessWidget {
       FirebaseAuth.instance.signOut();
       Navigator.pop(context);
       Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Login())
+          context,
+          MaterialPageRoute(builder: (context) => Login())
       );
     }
 
@@ -74,7 +119,7 @@ class User extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "%last_name%, %first_name%",
+                          lName.toString()+", "+fName.toString(),
                           style: TextStyle(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -96,7 +141,7 @@ class User extends StatelessWidget {
                               color: Colors.white),
                         ),
                         Text(
-                          "MM/DD/YYYY",
+                          bDay.toString(),
                           style: TextStyle(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -118,7 +163,7 @@ class User extends StatelessWidget {
                               color: Colors.white),
                         ),
                         Text(
-                          "%user_adress%",
+                          address.toString(),
                           style: TextStyle(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -160,7 +205,55 @@ class User extends StatelessWidget {
                               color: Colors.white),
                         ),
                         TextButton(
-                          onPressed: null,
+                          onPressed: () async {
+                            return showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                      'Change Password',
+                                      style: TextStyle(fontSize: 20, fontStyle: FontStyle.normal),
+                                    ),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        TextField(
+                                          controller: currPassword,
+                                          decoration: InputDecoration(hintText: "Current Password"),
+                                          obscureText: true,
+                                        ),
+                                        TextField(
+                                          controller: newPassword,
+                                          decoration: InputDecoration(hintText: "New Password"),
+                                          obscureText: true,
+                                        ),
+                                        TextField(
+                                          controller: confPassword,
+                                          decoration: InputDecoration(hintText: "Confirm Password"),
+                                          obscureText: true,
+                                        ),
+                                        Align(
+                                          alignment: Alignment.bottomRight,
+                                          child: Row(
+                                            children: [
+                                              TextButton(
+                                                child: Text('Cancel'),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                              TextButton(
+                                                child: Text('OK'),
+                                                onPressed: null,
+                                              ),
+                                            ],
+                                          ),
+                                          ),
+                                    ],
+                                        ),
+                                  );
+                                });
+                          },
                           child: Text(
                             "Change",
                             style: TextStyle(
@@ -181,8 +274,8 @@ class User extends StatelessWidget {
                     TextButton(
                       onPressed: () {
                         Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AboutUs())
+                            context,
+                            MaterialPageRoute(builder: (context) => AboutUs())
                         );
                       },
                       child: Text(

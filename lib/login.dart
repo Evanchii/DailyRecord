@@ -14,57 +14,18 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State {
   bool fail = false;
-  final stdNo = TextEditingController(),
+  final email = TextEditingController(),
       password = TextEditingController(),
-      email = TextEditingController();
-
-  String strEmail;
+      forgotEmail = TextEditingController();
 
   DatabaseReference dbRef = FirebaseDatabase().reference();
 
   @override
   void dispose() {
+    forgotEmail.dispose();
     email.dispose();
-    stdNo.dispose();
     password.dispose();
     super.dispose();
-  }
-
-  Future<String> checkUser() async {
-    await dbRef
-        .child('student')
-        .child(stdNo.text)
-        .child('email')
-        .once()
-        .then((DataSnapshot data) {
-      print('std' + data.value);
-      if (data.value != null) {
-        strEmail = data.value;
-      }
-    });
-    await dbRef
-        .child('faculty')
-        .child(stdNo.text)
-        .child('email')
-        .once()
-        .then((DataSnapshot data) {
-      if (data.value != null) {
-        print('fac: true');
-        strEmail = data.value;
-      }
-    });
-    await dbRef
-        .child('admin')
-        .child(stdNo.text)
-        .child('email')
-        .once()
-        .then((DataSnapshot data) {
-      if (data.value != null) {
-        print('ad: true');
-        strEmail = data.value;
-      }
-    });
-    return null;
   }
 
   void login() async {
@@ -94,13 +55,11 @@ class _LoginState extends State {
     );
 
     print('Pressed!');
-    print('ID/PW\t' + stdNo.text + '\t' + password.text);
-    if (stdNo.text.isNotEmpty && password.text.isNotEmpty) {
-      await checkUser();
-      if (strEmail.isNotEmpty) {
+    print('ID/PW\t' + email.text + '\t' + password.text);
+    if (email.text.isNotEmpty && password.text.isNotEmpty) {
         try {
           await FirebaseAuth.instance.signInWithEmailAndPassword(
-              email: strEmail.toString(), password: password.text);
+              email: email.text, password: password.text);
           Navigator.pop(context);
           Navigator.pop(context);
           Navigator.push(
@@ -117,11 +76,6 @@ class _LoginState extends State {
                 .showSnackBar(SnackBar(content: Text("Wrong password!")));
           }
         }
-      } else {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("User not found!")));
-      }
     } else {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -159,7 +113,7 @@ class _LoginState extends State {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
-                    controller: email,
+                    controller: forgotEmail,
                     decoration: InputDecoration(hintText: "Email Address"),
                   ),
                   Align(
@@ -171,7 +125,7 @@ class _LoginState extends State {
                         fail = false;
                         print('1');
                         FirebaseAuth.instance
-                            .sendPasswordResetEmail(email: email.text)
+                            .sendPasswordResetEmail(email: forgotEmail.text)
                             .onError((error, stackTrace) => fail = true)
                             .whenComplete(() => success());
                       },
@@ -211,9 +165,9 @@ class _LoginState extends State {
                           height: 30,
                         ),
                         TextField(
-                          controller: stdNo,
+                          controller: email,
                           decoration: InputDecoration(
-                            hintText: 'Student Number',
+                            hintText: 'Email',
                             fillColor: Color(0x66B6B6B6),
                             filled: true,
                             hintStyle: TextStyle(

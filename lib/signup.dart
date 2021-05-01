@@ -10,7 +10,7 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   bool exist;
   DatabaseReference dbRef =
-      FirebaseDatabase.instance.reference().child("student");
+      FirebaseDatabase.instance.reference().child("users");
   TextEditingController email = TextEditingController(),
       stdNo = TextEditingController(),
       password = TextEditingController(),
@@ -28,13 +28,6 @@ class _SignUpState extends State<SignUp> {
   Future<bool> rootFirebaseIsExists(DatabaseReference dbRef) async {
     DataSnapshot snapshot = await dbRef.once();
     return snapshot != null;
-  }
-
-  bool checkUser() {
-    dbRef.child('email').once().then((DataSnapshot data) {
-      if (data != null) return true;
-    });
-    return false;
   }
 
   void signUp() async {
@@ -63,26 +56,22 @@ class _SignUpState extends State<SignUp> {
       },
     );
 
-    print('hi');
     if (email.text.isNotEmpty &&
         stdNo.text.isNotEmpty &&
         password.text.isNotEmpty &&
         confPass.text.isNotEmpty) {
-      print('2');
       print(password.text + "\n" + confPass.text);
       if (password.text == confPass.text) {
         try {
-          if (!checkUser()) {
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
                 email: email.text, password: password.text);
+            var user = FirebaseAuth.instance.currentUser;
+            user.updateProfile(displayName: stdNo.text);
             print(email.text + '\t' + stdNo.text + '\t' + password.text);
-            dbRef.child(stdNo.text).set(
+            dbRef.child(FirebaseAuth.instance.currentUser.uid).set(
                 {'userType': "student", 'park': false, 'email': email.text});
             Navigator.pop(context);
             Navigator.pop(context);
-          } else
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text("Student ID is in use")));
         } on FirebaseAuthException catch (e) {
           Navigator.pop(context);
           if (e.code == 'weak-password') {
