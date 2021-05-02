@@ -1,24 +1,83 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:intl/intl.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
-class ConfirmData extends StatelessWidget {
+class ConfirmData extends StatefulWidget {
+  @override
+  _ConfirmDataState createState() => _ConfirmDataState();
+}
+
+class _ConfirmDataState extends State<ConfirmData> {
+  DatabaseReference dbRef = FirebaseDatabase.instance.reference();
+  TextEditingController code = new TextEditingController();
+  bool visible = false;
+  String area = " ", time = " ", date = " ";
+  DateTime now;
+
+  void scan() async {
+    await Permission.camera.request();
+    String barcode = await scanner.scan();
+    if (barcode == null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Invalid QR Code!")));
+    } else {
+      code.text = barcode;
+    }
+  }
+
+  void record() async {
+    var uid = FirebaseAuth.instance.currentUser.uid;
+    String formattedDate = DateFormat('yyyy-MM-dd kk:mm:ss').format(now);
+    print(formattedDate);
+    dbRef.child("users/" + uid + "/history/" + formattedDate).set({
+      'stdNo': FirebaseAuth.instance.currentUser.displayName,
+      'uid': FirebaseAuth.instance.currentUser.uid,
+      'room': code.text,
+      'date': date,
+      'time': time
+    });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Recorded!')));
+    Navigator.pop(context);
+  }
+
+  void confirmData() async {
+    if (await verify()) {
+      setState(() {
+        area = code.text;
+        now = DateTime.now();
+        time = DateFormat('kk:mm:ss').format(now);
+        date = DateFormat('yyyy-MM-dd').format(now);
+        visible = true;
+      });
+    }
+    else if(code.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter required data!')));
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Room Code not found!')));
+    }
+  }
+
+  Future<bool> verify() async {
+    if(code.text.isNotEmpty) {
+      var rooms = (await dbRef.child("admin/rooms").once()).value;
+      print('rm' + rooms.toString());
+      for (String room in rooms) {
+        if (room == code.text) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    TextEditingController code = new TextEditingController();
     double width = MediaQuery.of(context).size.width;
-
-    void scan() async {
-      await Permission.camera.request();
-      String barcode = await scanner.scan();
-      if (barcode == null) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Invalid QR Code!")));
-      } else {
-          code.text = barcode;
-      }
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -77,11 +136,13 @@ class ConfirmData extends StatelessWidget {
                                     children: <Widget>[
                                       Text('Enter Room Code:'),
                                       TextField(
-                                        decoration:
-                                            InputDecoration(hintText: 'ABC123'),
+                                        decoration: InputDecoration(
+                                            hintText: 'ABC 123'),
                                         controller: code,
                                       ),
-                                      ElevatedButton(onPressed: null, child: Text('Submit')),
+                                      ElevatedButton(
+                                          onPressed: confirmData,
+                                          child: Text('Submit')),
                                     ],
                                   ),
                                 ),
@@ -97,112 +158,117 @@ class ConfirmData extends StatelessWidget {
                     color: Colors.white,
                     thickness: 1.0,
                   ),
-                  Container(
-                    //ConfirmData
-                    height: height * .60 < 329.0 ? 329.0 : height * .60,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          "Confirm Data",
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor,
+                  Visibility(
+                    visible: visible,
+                    child: Container(
+                      //ConfirmData
+                      height: height * .60 < 329.0 ? 329.0 : height * .60,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            "Confirm Data",
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).primaryColor,
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Area:",
-                              style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white),
-                            ),
-                            Text(
-                              "%RM%/AREA%",
-                              style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Time:",
-                              style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white),
-                            ),
-                            Text(
-                              "%time%",
-                              style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Date:",
-                              style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white),
-                            ),
-                            Text(
-                              "%date%",
-                              style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 250,
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 25.0, right: 25.0),
-                          child: Row(
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              ElevatedButton(
-                                onPressed: null,
-                                child: Text('Decline'),
-                                style: ElevatedButton.styleFrom(
-                                  primary: Theme.of(context).primaryColor,
-                                ),
+                              Text(
+                                "Area:",
+                                style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white),
                               ),
-                              ElevatedButton(
-                                onPressed: null,
-                                child: Text('Confirm'),
-                                style: ElevatedButton.styleFrom(
-                                  primary: Theme.of(context).primaryColor,
-                                ),
+                              Text(
+                                area.toString(),
+                                style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white),
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                "Time:",
+                                style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white),
+                              ),
+                              Text(
+                                time.toString(),
+                                style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                "Date:",
+                                style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white),
+                              ),
+                              Text(
+                                date.toString(),
+                                style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 250,
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 25.0, right: 25.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Decline'),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Theme.of(context).accentColor,
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: record,
+                                  child: Text('Confirm'),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Theme.of(context).accentColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
