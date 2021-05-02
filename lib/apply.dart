@@ -234,8 +234,8 @@ class _ApplyState extends State<Apply> {
 
   void upload()async{
     var snapshotDL= await storage.ref().child("Driver License/${path.basename(_imageFileDL.path)}").putFile(_imageFileDL);
-    var snapshotORCR= await storage.ref().child("ORCR/${path.basename(_imageFileDL.path)}").putFile(_imageFileDL);
-    var snapshotSchoolID= await storage.ref().child("SchoolID/${path.basename(_imageFileDL.path)}").putFile(_imageFileDL);
+    var snapshotORCR= await storage.ref().child("ORCR/${path.basename(_imageFileORCR.path)}").putFile(_imageFileORCR);
+    var snapshotSchoolID= await storage.ref().child("SchoolID/${path.basename(_imageFileSchoolID.path)}").putFile(_imageFileSchoolID);
 
     String downlodURL_DL = await snapshotDL.ref.getDownloadURL();
     String downlodURL_ORCR = await snapshotORCR.ref.getDownloadURL();
