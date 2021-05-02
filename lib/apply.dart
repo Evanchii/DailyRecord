@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as path;
+
 
 // class Apply extends StatelessWidget {
 class Apply extends StatefulWidget {
@@ -11,6 +14,8 @@ class _ApplyState extends State<Apply> {
   File _imageFileDL;
   File _imageFileORCR;
   File _imageFileSchoolID;
+
+  FirebaseStorage storage = FirebaseStorage.instance;
 
   final picker = ImagePicker();
 
@@ -167,6 +172,7 @@ class _ApplyState extends State<Apply> {
     this.setState(() {
       if (_pictureORCR != null) {
         _imageFileORCR = File(_pictureORCR.path);
+
       } else {
         print("No Image Selected");
       }
@@ -216,7 +222,29 @@ class _ApplyState extends State<Apply> {
           );
         });
   }
+  // Future uploadImageToFirebase(BuildContext context) async {
+  //   String fileName = basename(_imageFileDL.path);
+  //   StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child('uploads/$fileName');
+  //   StorageUploadTask uploadTask = firebaseStorageRef.putFile(_imageFileDL);
+  //   // StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+  //   // taskSnapshot.ref.getDownloadURL().then(
+  //   //       (value) => print("Done: $value"),
+  //   // );
+  // }
 
+  void upload()async{
+    var snapshotDL= await storage.ref().child("Driver License/${path.basename(_imageFileDL.path)}").putFile(_imageFileDL);
+    var snapshotORCR= await storage.ref().child("ORCR/${path.basename(_imageFileDL.path)}").putFile(_imageFileDL);
+    var snapshotSchoolID= await storage.ref().child("SchoolID/${path.basename(_imageFileDL.path)}").putFile(_imageFileDL);
+
+    String downlodURL_DL = await snapshotDL.ref.getDownloadURL();
+    String downlodURL_ORCR = await snapshotORCR.ref.getDownloadURL();
+    String downlodURL_SchoolID = await snapshotSchoolID.ref.getDownloadURL();
+
+    print(downlodURL_DL);
+    print(downlodURL_ORCR);
+    print(downlodURL_SchoolID);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -399,7 +427,10 @@ class _ApplyState extends State<Apply> {
                         ),
                         Center(
                           child: ElevatedButton(
-                            onPressed: null,
+                            onPressed: (){
+                              upload();
+                              print("Clicked");
+                              },
                             child: Text('Submit'),
                             style: ElevatedButton.styleFrom(
                               primary: Theme.of(context).primaryColor,
@@ -418,3 +449,6 @@ class _ApplyState extends State<Apply> {
     );
   }
 }
+
+
+
