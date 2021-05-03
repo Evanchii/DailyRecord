@@ -131,7 +131,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                                 MaterialPageRoute(
                                   builder: (context) => History(),
                                   settings: RouteSettings(
-                                    arguments: "UserHis",
+                                    arguments: "user",
                                   ),
                                 ),
                               );
@@ -158,12 +158,12 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                                   MaterialPageRoute(
                                     builder: (context) => AreaList(),
                                     settings: RouteSettings(
-                                      arguments: "AdminHis",
+                                      arguments: "2",
                                     ),
                                   ),
                                 );
                               },
-                              child: Text('Admin\nHistory', textAlign: TextAlign.center,)),
+                              child: Text('Room\nHistory', textAlign: TextAlign.center,)),
                         ),
                         Visibility(
                           visible: admin,
@@ -174,7 +174,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                                   MaterialPageRoute(
                                     builder: (context) => AreaList(),
                                     settings: RouteSettings(
-                                      arguments: "CapCtrl",
+                                      arguments: "1",
                                     ),
                                   ),
                                 );

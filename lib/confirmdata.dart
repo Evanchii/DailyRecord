@@ -39,6 +39,13 @@ class _ConfirmDataState extends State<ConfirmData> {
       'date': date,
       'time': time
     });
+    dbRef.child("roomHistory/${code.text.toUpperCase()}/$formattedDate").set({
+      'stdNo': FirebaseAuth.instance.currentUser.displayName,
+      'uid': FirebaseAuth.instance.currentUser.uid,
+      'room': code.text,
+      'date': date,
+      'time': time
+    });
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Recorded!')));
     Navigator.pop(context);
   }
@@ -63,9 +70,8 @@ class _ConfirmDataState extends State<ConfirmData> {
 
   Future<bool> verify() async {
     if(code.text.isNotEmpty) {
-      var rooms = (await dbRef.child("admin/rooms").once()).value;
-      print('rm' + rooms.toString());
-      for (String room in rooms) {
+      var rooms = (await dbRef.child("room").once()).value;
+      for (String room in rooms.keys) {
         if (room == code.text) {
           return true;
         }

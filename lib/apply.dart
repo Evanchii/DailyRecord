@@ -1,9 +1,9 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as path;
-
 
 // class Apply extends StatelessWidget {
 class Apply extends StatefulWidget {
@@ -42,7 +42,6 @@ class _ApplyState extends State<Apply> {
     });
     Navigator.of(context).pop();
   }
-
 
   Future<void> _showDialogSchoolID(BuildContext context) {
     return showDialog(
@@ -86,7 +85,6 @@ class _ApplyState extends State<Apply> {
           );
         });
   }
-
 
   void _openGalleryDL(BuildContext context) async {
     var _pictureDL = await picker.getImage(source: ImageSource.gallery);
@@ -172,7 +170,6 @@ class _ApplyState extends State<Apply> {
     this.setState(() {
       if (_pictureORCR != null) {
         _imageFileORCR = File(_pictureORCR.path);
-
       } else {
         print("No Image Selected");
       }
@@ -222,20 +219,27 @@ class _ApplyState extends State<Apply> {
           );
         });
   }
-  // Future uploadImageToFirebase(BuildContext context) async {
-  //   String fileName = basename(_imageFileDL.path);
-  //   StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child('uploads/$fileName');
-  //   StorageUploadTask uploadTask = firebaseStorageRef.putFile(_imageFileDL);
-  //   // StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-  //   // taskSnapshot.ref.getDownloadURL().then(
-  //   //       (value) => print("Done: $value"),
-  //   // );
-  // }
 
-  void upload()async{
-    var snapshotDL= await storage.ref().child("Driver License/${path.basename(_imageFileDL.path)}").putFile(_imageFileDL);
-    var snapshotORCR= await storage.ref().child("ORCR/${path.basename(_imageFileORCR.path)}").putFile(_imageFileORCR);
-    var snapshotSchoolID= await storage.ref().child("SchoolID/${path.basename(_imageFileSchoolID.path)}").putFile(_imageFileSchoolID);
+  void upload() async {
+    var extDL = _imageFileDL.path.toString().split('.');
+    var extORCR = _imageFileORCR.path.toString().split('.');
+    var extSchoolID = _imageFileSchoolID.path.toString().split('.');
+
+    var snapshotDL = await storage
+        .ref()
+        .child(
+            "Driver License/${FirebaseAuth.instance.currentUser.uid}.${extDL[extDL.length - 1]}")
+        .putFile(_imageFileDL);
+    var snapshotORCR = await storage
+        .ref()
+        .child(
+            "ORCR/${FirebaseAuth.instance.currentUser.uid}.${extDL[extORCR.length - 1]}")
+        .putFile(_imageFileORCR);
+    var snapshotSchoolID = await storage
+        .ref()
+        .child(
+            "SchoolID/${FirebaseAuth.instance.currentUser.uid}.${extDL[extSchoolID.length - 1]}}")
+        .putFile(_imageFileSchoolID);
 
     String downlodURL_DL = await snapshotDL.ref.getDownloadURL();
     String downlodURL_ORCR = await snapshotORCR.ref.getDownloadURL();
@@ -354,10 +358,10 @@ class _ApplyState extends State<Apply> {
                             child: _imageFileSchoolID == null
                                 ? Text("Image Here")
                                 : Image.file(
-                              _imageFileSchoolID,
-                              width: 300.0,
-                              height: 300.0,
-                            )),
+                                    _imageFileSchoolID,
+                                    width: 300.0,
+                                    height: 300.0,
+                                  )),
                         SizedBox(
                           height: 10.0,
                         ),
@@ -427,10 +431,10 @@ class _ApplyState extends State<Apply> {
                         ),
                         Center(
                           child: ElevatedButton(
-                            onPressed: (){
+                            onPressed: () {
                               upload();
                               print("Clicked");
-                              },
+                            },
                             child: Text('Submit'),
                             style: ElevatedButton.styleFrom(
                               primary: Theme.of(context).primaryColor,
@@ -449,6 +453,3 @@ class _ApplyState extends State<Apply> {
     );
   }
 }
-
-
-

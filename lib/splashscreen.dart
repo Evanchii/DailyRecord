@@ -1,4 +1,3 @@
-import 'package:dailyrecord/apply.dart';
 import 'package:dailyrecord/login.dart';
 import 'package:dailyrecord/dashframe.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +15,7 @@ void main() async {
 
   if (FirebaseAuth.instance.currentUser != null) {
     runApp(new MaterialApp(
-      home: Login(),
+      home: DashFrame(),
       theme: ThemeData(
         // Define the default brightness and colors.
         brightness: Brightness.dark,
