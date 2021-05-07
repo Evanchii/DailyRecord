@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'aboutus.dart';
 import 'login.dart';
 
-class User extends StatefulWidget {
+class UserData extends StatefulWidget {
   @override
-  _UserState createState() => _UserState();
+  _UserDataState createState() => _UserDataState();
 }
 
-class _UserState extends State<User> with WidgetsBindingObserver {
+class _UserDataState extends State<UserData> with WidgetsBindingObserver {
 
   DatabaseReference dbRef = FirebaseDatabase.instance.reference();
   String fName, lName, bDay, address;

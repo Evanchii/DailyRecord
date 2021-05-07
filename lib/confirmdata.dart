@@ -55,7 +55,7 @@ class _ConfirmDataState extends State<ConfirmData> {
       setState(() {
         area = code.text;
         now = DateTime.now();
-        time = DateFormat('kk:mm:ss').format(now);
+        time = TimeOfDay.now().format(context).toString();
         date = DateFormat('yyyy-MM-dd').format(now);
         visible = true;
       });
