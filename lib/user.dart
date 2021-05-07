@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'aboutus.dart';
 import 'login.dart';
@@ -12,13 +13,17 @@ class UserData extends StatefulWidget {
 }
 
 class _UserDataState extends State<UserData> with WidgetsBindingObserver {
-
   DatabaseReference dbRef = FirebaseDatabase.instance.reference();
   String fName, lName, bDay, address;
+  DateTime selectedDate = DateTime.now();
 
   TextEditingController currPassword = TextEditingController(),
-  newPassword = TextEditingController(),
-  confPassword = TextEditingController();
+      newPassword = TextEditingController(),
+      confPassword = TextEditingController(),
+      bDate = TextEditingController(),
+      firstName = TextEditingController(),
+      lastName = TextEditingController(),
+      fieldAddress = TextEditingController();
 
   @override
   void initState() {
@@ -42,13 +47,111 @@ class _UserDataState extends State<UserData> with WidgetsBindingObserver {
 
   void getData() async {
     var uid = FirebaseAuth.instance.currentUser.uid;
-    fName = (await FirebaseDatabase.instance.reference().child("user/"+uid+"/fName").once()).value;
-    lName = (await FirebaseDatabase.instance.reference().child("user/"+uid+"/lName").once()).value;
-    bDay = (await FirebaseDatabase.instance.reference().child("user/"+uid+"/bDay").once()).value;
-    address = (await FirebaseDatabase.instance.reference().child("user/"+uid+"/address").once()).value;
-    setState((){
+    fName = (await FirebaseDatabase.instance
+            .reference()
+            .child("user/" + uid + "/fName")
+            .once())
+        .value;
+    lName = (await FirebaseDatabase.instance
+            .reference()
+            .child("user/" + uid + "/lName")
+            .once())
+        .value;
+    bDay = (await FirebaseDatabase.instance
+            .reference()
+            .child("user/" + uid + "/bDay")
+            .once())
+        .value;
+    address = (await FirebaseDatabase.instance
+            .reference()
+            .child("user/" + uid + "/address")
+            .once())
+        .value;
+
+    firstName.text = fName;
+    lastName.text = lName;
+    bDate.text = bDay;
+    fieldAddress.text = address;
+
+    setState(() {
       print('Hello World');
     });
+  }
+
+  Future<void> editUserInfo(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              'Edit User Information',
+              style: TextStyle(fontSize: 20, fontStyle: FontStyle.normal),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('First Name'),
+                TextField(
+                  controller: firstName,
+                  decoration: InputDecoration(hintText: "First Name"),
+                ),
+                Text('Last Name'),
+                TextField(
+                  controller: lastName,
+                  decoration: InputDecoration(hintText: "Last Name"),
+                ),
+                Text('Birthday'),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: bDate,
+                        decoration: InputDecoration(hintText: "MM/DD/YYYY"),
+                      ),
+                    ),
+                    TextButton(
+                      child: Icon(Icons.calendar_today),
+                      onPressed: () {
+                        _selectDate(context);
+                      },
+                    ),
+                  ],
+                ),
+                Text('Address'),
+                TextField(
+                  controller: fieldAddress,
+                  decoration: InputDecoration(hintText: "Address"),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Cancel')),
+                      TextButton(onPressed: null, child: Text('Save')),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+        bDate.text = DateFormat('MM/dd/yyyy').format(selectedDate);
+      });
   }
 
   @override
@@ -58,10 +161,7 @@ class _UserDataState extends State<UserData> with WidgetsBindingObserver {
     void logout() {
       FirebaseAuth.instance.signOut();
       Navigator.pop(context);
-      Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Login())
-      );
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
     }
 
     return Scaffold(
@@ -96,7 +196,9 @@ class _UserDataState extends State<UserData> with WidgetsBindingObserver {
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: null,
+                          onPressed: () {
+                            editUserInfo(context);
+                          },
                           child: Text('Edit'),
                           style: ElevatedButton.styleFrom(
                             primary: Theme.of(context).primaryColor,
@@ -115,11 +217,10 @@ class _UserDataState extends State<UserData> with WidgetsBindingObserver {
                           style: TextStyle(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
-                              color: Colors.white
-                          ),
+                              color: Colors.white),
                         ),
                         Text(
-                          lName.toString()+", "+fName.toString(),
+                          lName.toString() + ", " + fName.toString(),
                           style: TextStyle(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -212,24 +313,29 @@ class _UserDataState extends State<UserData> with WidgetsBindingObserver {
                                   return AlertDialog(
                                     title: Text(
                                       'Change Password',
-                                      style: TextStyle(fontSize: 20, fontStyle: FontStyle.normal),
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontStyle: FontStyle.normal),
                                     ),
                                     content: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         TextField(
                                           controller: currPassword,
-                                          decoration: InputDecoration(hintText: "Current Password"),
+                                          decoration: InputDecoration(
+                                              hintText: "Current Password"),
                                           obscureText: true,
                                         ),
                                         TextField(
                                           controller: newPassword,
-                                          decoration: InputDecoration(hintText: "New Password"),
+                                          decoration: InputDecoration(
+                                              hintText: "New Password"),
                                           obscureText: true,
                                         ),
                                         TextField(
                                           controller: confPassword,
-                                          decoration: InputDecoration(hintText: "Confirm Password"),
+                                          decoration: InputDecoration(
+                                              hintText: "Confirm Password"),
                                           obscureText: true,
                                         ),
                                         Align(
@@ -248,9 +354,9 @@ class _UserDataState extends State<UserData> with WidgetsBindingObserver {
                                               ),
                                             ],
                                           ),
-                                          ),
-                                    ],
                                         ),
+                                      ],
+                                    ),
                                   );
                                 });
                           },
@@ -273,10 +379,8 @@ class _UserDataState extends State<UserData> with WidgetsBindingObserver {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => AboutUs())
-                        );
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => AboutUs()));
                       },
                       child: Text(
                         "About Us ->",
