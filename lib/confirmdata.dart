@@ -29,6 +29,17 @@ class _ConfirmDataState extends State<ConfirmData> {
   }
 
   void record() async {
+    int space = int.parse((await dbRef.child('admin/parkingSpace').once()).value.toString());
+    if(code.text == "ARELLANO_ENTRANCE") {
+      if(space > 0) {
+        dbRef.child('admin').update({'parkingSpace': space-1});
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('There are no more space left!')));
+      }
+    }
+    else if(code.text == "NAVEL_EXIT") {
+      dbRef.child('admin').update({'parkingSpace': space+1});
+    }
     var uid = FirebaseAuth.instance.currentUser.uid;
     String formattedDate = DateFormat('yyyy-MM-dd kk:mm:ss').format(now);
     print(formattedDate);
@@ -70,6 +81,8 @@ class _ConfirmDataState extends State<ConfirmData> {
 
   Future<bool> verify() async {
     if(code.text.isNotEmpty) {
+      if(code.text == "ARELLANO_ENTRANCE" || code.text == "NAVEL_EXIT")
+        return true;
       var rooms = (await dbRef.child("room").once()).value;
       for (String room in rooms.keys) {
         if (room == code.text) {

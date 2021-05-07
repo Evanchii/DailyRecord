@@ -38,11 +38,19 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   }
 
   void getData() async {
+    dbRef.child('admin').onChildChanged.forEach((element) {
+      setState(() {
+        space = int.parse(element.snapshot.value.toString());
+        print(element.snapshot.value.toString());
+      });
+      print('debug[1]: ' + space.toString());
+    });
     space = (await FirebaseDatabase.instance
             .reference()
             .child("admin/parkingSpace")
             .once())
         .value;
+    print('debug[2]: ' + space.toString());
     type = (await FirebaseDatabase.instance
             .reference()
             .child(
@@ -163,7 +171,10 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                                   ),
                                 );
                               },
-                              child: Text('Room\nHistory', textAlign: TextAlign.center,)),
+                              child: Text(
+                                'Room\nHistory',
+                                textAlign: TextAlign.center,
+                              )),
                         ),
                         Visibility(
                           visible: admin,
@@ -179,7 +190,10 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                                   ),
                                 );
                               },
-                              child: Text('Capacity\nLimit', textAlign: TextAlign.center,)),
+                              child: Text(
+                                'Capacity\nLimit',
+                                textAlign: TextAlign.center,
+                              )),
                         ),
                       ],
                     ),
