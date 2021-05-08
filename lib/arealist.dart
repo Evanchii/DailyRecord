@@ -2,6 +2,7 @@ import 'package:dailyrecord/history.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AreaList extends StatefulWidget {
@@ -10,6 +11,7 @@ class AreaList extends StatefulWidget {
 }
 
 class _AreaListState extends State<AreaList> {
+  TextEditingController changeCapacity = new TextEditingController();
   DatabaseReference dbRef = FirebaseDatabase.instance.reference();
   var rooms, lvl = "0", type = "user", title = "";
 
@@ -40,6 +42,58 @@ class _AreaListState extends State<AreaList> {
     });
   }
 
+  Future<void> dialogCapacity(BuildContext context, String key) async {
+    changeCapacity.text =
+        (await dbRef.child('room/${key}').once()).value.toString();
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              'Change Capacity',
+              style: TextStyle(fontSize: 20, fontStyle: FontStyle.normal),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: changeCapacity,
+                  decoration: InputDecoration(
+                    hintText: 'Capacity',
+                    fillColor: Color(0x66B6B6B6),
+                    filled: true,
+                    hintStyle: TextStyle(
+                        color: Colors.grey, decorationColor: Colors.white),
+                  ),
+                ),
+                SizedBox(
+                  height: 15.0,
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(onPressed: (){Navigator.pop(context);}, child: Text("Cancel")),
+                    ElevatedButton(
+                        onPressed: () async {
+                          await dbRef
+                              .child('room')
+                              .update({key: int.parse(changeCapacity.text)});
+                          Navigator.pop(context);
+                          setState(() {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Updated!")));
+                            getData();
+                          });
+                        },
+                        child: Text("Confirm")),
+                  ],
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   Widget createTable() {
     List<TableRow> rows = [];
     if (rooms != null && lvl == "1") {
@@ -67,7 +121,11 @@ class _AreaListState extends State<AreaList> {
               textAlign: TextAlign.center,
             ),
           ),
-          TextButton(onPressed: null, child: Text(value.toString())),
+          TextButton(
+              onPressed: () {
+                dialogCapacity(context, key.toString());
+              },
+              child: Text(value.toString())),
         ]));
       });
       return Table(
