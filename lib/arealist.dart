@@ -1,6 +1,5 @@
 import 'package:dailyrecord/history.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -166,9 +165,11 @@ class _AreaListState extends State<AreaList> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
-        title: Image(
-          image: AssetImage('assets/banner.png'),
-          height: 50,
+        title: Center(
+          child: Image(
+            image: AssetImage('assets/banner.png'),
+            height: 50,
+          ),
         ),
       ),
       body: SafeArea(

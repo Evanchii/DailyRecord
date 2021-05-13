@@ -5,123 +5,111 @@ class AboutUs extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('About Us'),
+        backgroundColor: Theme.of(context).backgroundColor,
+        title: Center(
+          child: Image(
+            image: AssetImage('assets/banner.png'),
+            height: 50,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(16),
         child: Column(
           children: <Widget>[
             Row(
+              mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Image(
-                  image: AssetImage('assets/pablo_test.jpg'),
-                  height: 110,
-                  width: 110,
+                ClipOval(
+                  child: Image(
+                    image: AssetImage('assets/team/CASTILLO.png'),
+                    height: 100,
+                    width: 100,
+                  ),
                 ),
-
-                Center(child:Container(
-                    padding: EdgeInsets.fromLTRB(30, 20, 0, 20),
-                    child: Text('CASTILLO, Al Evan C. \nDeveloper',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 20)
-                    )
-                )
+                Expanded(
+                  child: Text('CASTILLO, Al Evan C.\nDeveloper',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15)),
                 ),
               ],
             ),
-
             new Padding(
               padding: const EdgeInsets.only(top: 25.0),
             ),
-
             Row(
               children: <Widget>[
-                Image(
-                  image: AssetImage('assets/pablo_test.jpg'),
-                  height: 110,
-                  width: 110,
+                ClipOval(
+                  child: Image(
+                    image: AssetImage('assets/team/FERNANDEZ.png'),
+                    height: 100,
+                    width: 100,
+                  ),
                 ),
-
-                Center(child:Container(
-                    padding: EdgeInsets.fromLTRB(30, 20, 0, 20),
-                    child: Text('VILLANUEVA, Ryan L. \nDeveloper',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 20)
-                    )
-                )
+                Expanded(
+                  child: Text('FERNANDEZ, Arniel C.\nDeveloper',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15)),
                 ),
               ],
             ),
-
             new Padding(
               padding: const EdgeInsets.only(top: 25.0),
             ),
-
             Row(
               children: <Widget>[
-                Image(
-                  image: AssetImage('assets/pablo_test.jpg'),
-                  height: 110,
-                  width: 110,
+                ClipOval(
+                  child: Image(
+                    image: AssetImage('assets/team/PABLO.png'),
+                    height: 100,
+                    width: 100,
+                  ),
                 ),
-
-                Center(child:Container(
-                    padding: EdgeInsets.fromLTRB(30, 20, 0, 20),
-                    child: Text('TEJANO, Shawn Josh S. \nDeveloper',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 20)
-                    )
-                )
+                Expanded(
+                  child: Text('PABLO, Roweign Kedriech D.\nProject Manager',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15)),
                 ),
               ],
             ),
-
             new Padding(
               padding: const EdgeInsets.only(top: 25.0),
             ),
-
             Row(
               children: <Widget>[
-                Image(
-                  image: AssetImage('assets/pablo_test.jpg'),
-                  height: 110,
-                  width: 110,
+                ClipOval(
+                  child: Image(
+                    image: AssetImage('assets/team/TEJANO.png'),
+                    height: 100,
+                    width: 100,
+                  ),
                 ),
-
-                Center(child:Container(
-                    padding: EdgeInsets.fromLTRB(30, 20, 0, 20),
-                    child: Text('PABLO, Rioweign Kedriech D. \nDeveloper',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 17)
-                    )
-                )
+                Expanded(
+                  child: Text('TEJANO, Shawn Josh S.\nDeveloper',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15)),
                 ),
               ],
             ),
-
             new Padding(
               padding: const EdgeInsets.only(top: 25.0),
             ),
-
             Row(
               children: <Widget>[
-                Image(
-                  image: AssetImage('assets/pablo_test.jpg'),
-                  height: 110,
-                  width: 110,
+                ClipOval(
+                  child: Image(
+                    image: AssetImage('assets/team/VILLANUEVA.png'),
+                    height: 100,
+                    width: 100,
+                  ),
                 ),
-
-                Center(child:Container(
-                    padding: EdgeInsets.fromLTRB(30, 20, 0, 20),
-                    child: Text('FERNANDEZ, Arniel C. \nDeveloper',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 20)
-                    )
-                )
+                Expanded(
+                  child: Text('VILLANUEVA, Ryan L.\nDeveloper',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15)),
                 ),
               ],
             ),
-
           ],
         ),
       ),

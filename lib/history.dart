@@ -250,9 +250,11 @@ class _HistoryState extends State<History> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
-        title: Image(
-          image: AssetImage('assets/banner.png'),
-          height: 50,
+        title: Center(
+          child: Image(
+            image: AssetImage('assets/banner.png'),
+            height: 50,
+          ),
         ),
       ),
       body: SafeArea(

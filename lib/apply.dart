@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart' as path;
 
 // class Apply extends StatelessWidget {
 class Apply extends StatefulWidget {
@@ -255,9 +254,11 @@ class _ApplyState extends State<Apply> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
-        title: Image(
-          image: AssetImage('assets/banner.png'),
-          height: 50,
+        title: Center(
+          child: Image(
+            image: AssetImage('assets/banner.png'),
+            height: 50,
+          ),
         ),
       ),
       body: ListView(
