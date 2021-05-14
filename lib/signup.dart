@@ -60,14 +60,12 @@ class _SignUpState extends State<SignUp> {
         stdNo.text.isNotEmpty &&
         password.text.isNotEmpty &&
         confPass.text.isNotEmpty) {
-      print(password.text + "\n" + confPass.text);
       if (password.text == confPass.text) {
         try {
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
                 email: email.text, password: password.text);
             var user = FirebaseAuth.instance.currentUser;
             user.updateProfile(displayName: stdNo.text);
-            print(email.text + '\t' + stdNo.text + '\t' + password.text);
             dbRef.child(FirebaseAuth.instance.currentUser.uid).set(
                 {'userType': "student", 'park': false, 'email': email.text});
             Navigator.pop(context);
@@ -83,7 +81,6 @@ class _SignUpState extends State<SignUp> {
           }
         } catch (e) {
           Navigator.pop(context);
-          print(e);
         }
       } else {
         Navigator.pop(context);

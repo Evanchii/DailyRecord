@@ -42,7 +42,6 @@ class _ConfirmDataState extends State<ConfirmData> {
     }
     var uid = FirebaseAuth.instance.currentUser.uid;
     String formattedDate = DateFormat('yyyy-MM-dd kk:mm:ss').format(now);
-    print(formattedDate);
     dbRef.child("users/" + uid + "/history/" + formattedDate).set({
       'stdNo': FirebaseAuth.instance.currentUser.displayName,
       'uid': FirebaseAuth.instance.currentUser.uid,

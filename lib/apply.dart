@@ -24,7 +24,7 @@ class _ApplyState extends State<Apply> {
       if (_pictureSchoolID != null) {
         _imageFileSchoolID = File(_pictureSchoolID.path);
       } else {
-        print("No Image Selected");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Image Selected')));
       }
     });
     Navigator.of(context).pop();
@@ -36,7 +36,7 @@ class _ApplyState extends State<Apply> {
       if (_pictureSchoolID != null) {
         _imageFileSchoolID = File(_pictureSchoolID.path);
       } else {
-        print("No Image Selected");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Image Selected')));
       }
     });
     Navigator.of(context).pop();
@@ -91,7 +91,7 @@ class _ApplyState extends State<Apply> {
       if (_pictureDL != null) {
         _imageFileDL = File(_pictureDL.path);
       } else {
-        print("No Image Selected");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Image Selected')));
       }
     });
     Navigator.of(context).pop();
@@ -103,7 +103,7 @@ class _ApplyState extends State<Apply> {
       if (_pictureDL != null) {
         _imageFileDL = File(_pictureDL.path);
       } else {
-        print("No Image Selected");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Image Selected')));
       }
     });
     Navigator.of(context).pop();
@@ -158,7 +158,7 @@ class _ApplyState extends State<Apply> {
       if (_pictureORCR != null) {
         _imageFileORCR = File(_pictureORCR.path);
       } else {
-        print("No Image Selected");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Image Selected')));
       }
     });
     Navigator.of(context).pop();
@@ -170,7 +170,7 @@ class _ApplyState extends State<Apply> {
       if (_pictureORCR != null) {
         _imageFileORCR = File(_pictureORCR.path);
       } else {
-        print("No Image Selected");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Image Selected')));
       }
     });
     Navigator.of(context).pop();
@@ -243,10 +243,6 @@ class _ApplyState extends State<Apply> {
     String downlodURL_DL = await snapshotDL.ref.getDownloadURL();
     String downlodURL_ORCR = await snapshotORCR.ref.getDownloadURL();
     String downlodURL_SchoolID = await snapshotSchoolID.ref.getDownloadURL();
-
-    print(downlodURL_DL);
-    print(downlodURL_ORCR);
-    print(downlodURL_SchoolID);
   }
 
   @override
@@ -434,7 +430,6 @@ class _ApplyState extends State<Apply> {
                           child: ElevatedButton(
                             onPressed: () {
                               upload();
-                              print("Clicked");
                             },
                             child: Text('Submit'),
                             style: ElevatedButton.styleFrom(

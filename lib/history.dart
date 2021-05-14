@@ -100,6 +100,23 @@ class _HistoryState extends State<History> {
       return Table(
         children: rows,
       );
+    } else {
+      List<TableRow> rows = [];
+      rows.add(
+        TableRow(children: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Text(
+              'No Data Found',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+            ),
+          ),
+        ]),
+      );
+      return Table(
+        children: rows,
+      );
     }
     return null;
   }
@@ -282,9 +299,8 @@ class _HistoryState extends State<History> {
                     decoration: BoxDecoration(
                         border: Border.all(
                           color: Colors.white,
-                          width: 3,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                          width: 1,
+                        ),),
                     child: createTable(),
                   ),
                 ],

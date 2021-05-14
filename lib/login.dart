@@ -54,8 +54,6 @@ class _LoginState extends State {
       },
     );
 
-    print('Pressed!');
-    print('ID/PW\t' + email.text + '\t' + password.text);
     if (email.text.isNotEmpty && password.text.isNotEmpty) {
         try {
           await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -85,7 +83,6 @@ class _LoginState extends State {
 
   void success() {
     if(!fail) {
-      print('1');
       Navigator.pop(context);
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Email has been sent!")));
@@ -123,7 +120,6 @@ class _LoginState extends State {
                       onPressed: () {
                         FocusScope.of(context).unfocus();
                         fail = false;
-                        print('1');
                         FirebaseAuth.instance
                             .sendPasswordResetEmail(email: forgotEmail.text)
                             .onError((error, stackTrace) => fail = true)

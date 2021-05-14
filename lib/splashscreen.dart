@@ -20,7 +20,7 @@ void main() async {
       theme: ThemeData(
         // Define the default brightness and colors.
         brightness: Brightness.dark,
-        primaryColor: Color(0xffffd84d),
+        primaryColor: Color(0xffF7971D),
         accentColor: Color(0xffF7971D),
         backgroundColor: Color(0xff303030),
         // Define the default font family.

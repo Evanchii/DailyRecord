@@ -29,15 +29,12 @@ class _DashboardState extends State<DashFrame> {
 
   void initNotification() async {
     await dbRef.child("notification").onValue.forEach((element) {
-      print('ab');
-      print(element.snapshot.value);
       if (element.snapshot.value.toString().contains("room")) getNotifData();
     });
   }
 
   void getNotifData() async {
     notifData = (await dbRef.child("notification").once()).value;
-    print('b');
 
     //Notification
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -81,9 +78,7 @@ class _DashboardState extends State<DashFrame> {
         .child("roomHistory/${notifData['room']}")
         .once()
         .then((DataSnapshot data) {
-      print('c');
       data.value.forEach((key, value) {
-        print(FirebaseAuth.instance.currentUser.uid);
         if (value['uid'] == FirebaseAuth.instance.currentUser.uid) {
           double toDouble(TimeOfDay myTime) =>
               myTime.hour + myTime.minute / 60.0;
@@ -103,9 +98,12 @@ class _DashboardState extends State<DashFrame> {
           if (toDouble(time) >= toDouble(minTime) &&
               toDouble(time) <= toDouble(maxTime)) {
             DateTime issuingDate = DateTime(
-                int.parse(notifData['issuingDate'].toString().split('-')[0]),
-                int.parse(notifData['issuingDate'].toString().split('-')[1]),
-                int.parse(notifData['issuingDate'].toString().split('-')[2]))
+                    int.parse(
+                        notifData['issuingDate'].toString().split('-')[0]),
+                    int.parse(
+                        notifData['issuingDate'].toString().split('-')[1]),
+                    int.parse(
+                        notifData['issuingDate'].toString().split('-')[2]))
                 .add(Duration(days: 14));
             if (issuingDate.isAfter(DateTime.now()) ||
                 issuingDate.isAtSameMomentAs(DateTime.now())) {

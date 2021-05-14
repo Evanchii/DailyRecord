@@ -195,11 +195,10 @@ class _AreaListState extends State<AreaList> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 3,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 1,
+                      ),),
                     child: createTable(),
                   ),
                 ],
@@ -207,12 +206,6 @@ class _AreaListState extends State<AreaList> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print(rooms.toString());
-          print(lvl);
-        },
       ),
     );
   }

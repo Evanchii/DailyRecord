@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'apply.dart';
@@ -41,16 +42,13 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
     dbRef.child('admin').onChildChanged.forEach((element) {
       setState(() {
         space = int.parse(element.snapshot.value.toString());
-        print(element.snapshot.value.toString());
       });
-      print('debug[1]: ' + space.toString());
     });
     space = (await FirebaseDatabase.instance
             .reference()
             .child("admin/parkingSpace")
             .once())
         .value;
-    print('debug[2]: ' + space.toString());
     type = (await FirebaseDatabase.instance
             .reference()
             .child(
@@ -84,6 +82,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
             Container(
               padding: EdgeInsets.all(15),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Container(
                     child: Image(
@@ -123,79 +122,153 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                   new Padding(
                     padding: const EdgeInsets.only(top: 25.0),
                   ),
-                  Container(
-                    height: 200,
-                    child: GridView.count(
-                      padding: EdgeInsets.all(20),
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: (itemWidth / itemHeight),
-                      children: <Widget>[
-                        ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => History(),
-                                  settings: RouteSettings(
-                                    arguments: "user",
-                                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 60,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => History(),
+                            settings: RouteSettings(
+                              arguments: "user",
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 30),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.history),
+                              Expanded(
+                                child: Text(
+                                  'History',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 16),
                                 ),
-                              );
-                            },
-                            child: Text('History')),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => Apply()),
-                            );
-                          },
-                          child: Text(
-                            'Apply Parking\nSpace',
-                            textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
                         ),
-                        Visibility(
-                          visible: ins,
-                          child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AreaList(),
-                                    settings: RouteSettings(
-                                      arguments: "2",
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                'Room\nHistory',
-                                textAlign: TextAlign.center,
-                              )),
+                      ),
+                    ),
+                  ),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 60,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Apply()),
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 30),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.group_add),
+                              Expanded(
+                                child: Text(
+                                  'Apply Parking Space',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        Visibility(
-                          visible: admin,
-                          child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AreaList(),
-                                    settings: RouteSettings(
-                                      arguments: "1",
-                                    ),
+                      ),
+                    ),
+                  ),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 60,
+                    child: Visibility(
+                      visible: ins,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AreaList(),
+                              settings: RouteSettings(
+                                arguments: "2",
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 30),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.history),
+                                Expanded(
+                                  child: Text(
+                                    'Room History',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 16),
                                   ),
-                                );
-                              },
-                              child: Text(
-                                'Capacity\nLimit',
-                                textAlign: TextAlign.center,
-                              )),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ],
+                      ),
+                    ),
+                  ),
+                  Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 60,
+                    child: Visibility(
+                      visible: admin,
+                      child: ElevatedButton(
+                        // style: ButtonStyle(backgroundColor: Color(0xffF7971D)),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AreaList(),
+                              settings: RouteSettings(
+                                arguments: "1",
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 30),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.reduce_capacity),
+                                Expanded(
+                                  child: Text(
+                                    'Capacity Limit',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],
