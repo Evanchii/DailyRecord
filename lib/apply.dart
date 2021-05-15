@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -15,6 +16,11 @@ class _ApplyState extends State<Apply> {
   File _imageFileSchoolID;
 
   FirebaseStorage storage = FirebaseStorage.instance;
+  DatabaseReference dbRef = FirebaseDatabase().reference();
+
+  TextEditingController fName = TextEditingController(),
+  lName = TextEditingController(),
+  plateNumber = TextEditingController();
 
   final picker = ImagePicker();
 
@@ -24,7 +30,8 @@ class _ApplyState extends State<Apply> {
       if (_pictureSchoolID != null) {
         _imageFileSchoolID = File(_pictureSchoolID.path);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Image Selected')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('No Image Selected')));
       }
     });
     Navigator.of(context).pop();
@@ -36,7 +43,8 @@ class _ApplyState extends State<Apply> {
       if (_pictureSchoolID != null) {
         _imageFileSchoolID = File(_pictureSchoolID.path);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Image Selected')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('No Image Selected')));
       }
     });
     Navigator.of(context).pop();
@@ -91,7 +99,8 @@ class _ApplyState extends State<Apply> {
       if (_pictureDL != null) {
         _imageFileDL = File(_pictureDL.path);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Image Selected')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('No Image Selected')));
       }
     });
     Navigator.of(context).pop();
@@ -103,7 +112,8 @@ class _ApplyState extends State<Apply> {
       if (_pictureDL != null) {
         _imageFileDL = File(_pictureDL.path);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Image Selected')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('No Image Selected')));
       }
     });
     Navigator.of(context).pop();
@@ -158,7 +168,8 @@ class _ApplyState extends State<Apply> {
       if (_pictureORCR != null) {
         _imageFileORCR = File(_pictureORCR.path);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Image Selected')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('No Image Selected')));
       }
     });
     Navigator.of(context).pop();
@@ -170,7 +181,8 @@ class _ApplyState extends State<Apply> {
       if (_pictureORCR != null) {
         _imageFileORCR = File(_pictureORCR.path);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Image Selected')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('No Image Selected')));
       }
     });
     Navigator.of(context).pop();
@@ -224,25 +236,29 @@ class _ApplyState extends State<Apply> {
     var extORCR = _imageFileORCR.path.toString().split('.');
     var extSchoolID = _imageFileSchoolID.path.toString().split('.');
 
-    var snapshotDL = await storage
+    await storage
         .ref()
         .child(
             "Driver License/${FirebaseAuth.instance.currentUser.uid}.${extDL[extDL.length - 1]}")
         .putFile(_imageFileDL);
-    var snapshotORCR = await storage
+    await storage
         .ref()
         .child(
             "ORCR/${FirebaseAuth.instance.currentUser.uid}.${extDL[extORCR.length - 1]}")
         .putFile(_imageFileORCR);
-    var snapshotSchoolID = await storage
+    await storage
         .ref()
         .child(
             "SchoolID/${FirebaseAuth.instance.currentUser.uid}.${extDL[extSchoolID.length - 1]}}")
         .putFile(_imageFileSchoolID);
-
-    String downlodURL_DL = await snapshotDL.ref.getDownloadURL();
-    String downlodURL_ORCR = await snapshotORCR.ref.getDownloadURL();
-    String downlodURL_SchoolID = await snapshotSchoolID.ref.getDownloadURL();
+    dbRef
+        .child('users/${FirebaseAuth.instance.currentUser.uid}/parking')
+        .update({
+      'firstName': fName.text,
+      'lastName': lName.text,
+      'plateNumber': plateNumber.text,
+      'status': 'On-going',
+    });
   }
 
   @override
@@ -279,54 +295,63 @@ class _ApplyState extends State<Apply> {
                         SizedBox(
                           height: 20.0,
                         ),
-                        Row(
-                          children: <Widget>[
                             Text(
                               "First Name: ",
                               style: TextStyle(
                                   fontSize: 15.0, color: Colors.white),
                             ),
-                            Text(
-                              "PlaceHolder",
-                              style: TextStyle(
-                                  fontSize: 15.0, color: Colors.white),
-                            )
-                          ],
-                        ),
+                             TextField(
+                                controller: fName,
+                                decoration: InputDecoration(
+                                  hintText: 'Juan',
+                                  fillColor: Color(0x66B6B6B6),
+                                  filled: true,
+                                  hintStyle: TextStyle(
+                                      color: Colors.grey,
+                                      decorationColor: Colors.white),
+                                ),
+                                cursorColor: Theme.of(context).accentColor,
+                              ),
                         SizedBox(
                           height: 10.0,
                         ),
-                        Row(
-                          children: <Widget>[
                             Text(
                               "Last Name: ",
                               style: TextStyle(
                                   fontSize: 15.0, color: Colors.white),
                             ),
-                            Text(
-                              "PlaceHolder",
-                              style: TextStyle(
-                                  fontSize: 15.0, color: Colors.white),
-                            )
-                          ],
-                        ),
+                            TextField(
+                              controller: lName,
+                              decoration: InputDecoration(
+                                hintText: 'Dela Cruz',
+                                fillColor: Color(0x66B6B6B6),
+                                filled: true,
+                                hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    decorationColor: Colors.white),
+                              ),
+                              cursorColor: Theme.of(context).accentColor,
+                            ),
                         SizedBox(
                           height: 10.0,
                         ),
-                        Row(
-                          children: <Widget>[
                             Text(
                               "Plate Number: ",
                               style: TextStyle(
                                   fontSize: 15.0, color: Colors.white),
                             ),
-                            Text(
-                              "PlaceHolder",
-                              style: TextStyle(
-                                  fontSize: 15.0, color: Colors.white),
-                            )
-                          ],
-                        ),
+                            TextField(
+                              controller: plateNumber,
+                              decoration: InputDecoration(
+                                hintText: 'ABC 1234',
+                                fillColor: Color(0x66B6B6B6),
+                                filled: true,
+                                hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    decorationColor: Colors.white),
+                              ),
+                              cursorColor: Theme.of(context).accentColor,
+                            ),
                         SizedBox(
                           height: 10.0,
                         ),
@@ -353,7 +378,7 @@ class _ApplyState extends State<Apply> {
                         ),
                         Container(
                             child: _imageFileSchoolID == null
-                                ? Text("Image Here")
+                                ? Text('')
                                 : Image.file(
                                     _imageFileSchoolID,
                                     width: 300.0,
@@ -385,7 +410,7 @@ class _ApplyState extends State<Apply> {
                         ),
                         Container(
                             child: _imageFileDL == null
-                                ? Text("Image Here")
+                                ? Text('')
                                 : Image.file(
                                     _imageFileDL,
                                     width: 300.0,
@@ -417,7 +442,7 @@ class _ApplyState extends State<Apply> {
                         ),
                         Container(
                             child: _imageFileORCR == null
-                                ? Text("Image Here")
+                                ? Text('')
                                 : Image.file(
                                     _imageFileORCR,
                                     width: 300.0,

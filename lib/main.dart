@@ -1,4 +1,3 @@
-import 'package:dailyrecord/arealist.dart';
 import 'package:dailyrecord/login.dart';
 import 'package:dailyrecord/dashframe.dart';
 import 'package:firebase_auth/firebase_auth.dart';

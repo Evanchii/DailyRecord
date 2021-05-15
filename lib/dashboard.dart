@@ -72,9 +72,6 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final double itemHeight = 100;
-    final double itemWidth = MediaQuery.of(context).size.width - 100 / 2;
-
     return Scaffold(
       body: SafeArea(
         child: ListView(

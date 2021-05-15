@@ -118,7 +118,6 @@ class _HistoryState extends State<History> {
         children: rows,
       );
     }
-    return null;
   }
 
   Future<void> sendAlert(BuildContext context) {

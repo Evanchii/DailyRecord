@@ -108,12 +108,6 @@ class _SignUpState extends State<SignUp> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  // Container(
-                  //   height: height * .15,
-                  //   child: Center(
-                  //     child: Text('Placeholder'),
-                  //   ),
-                  // ),
                   Container(
                     padding: EdgeInsets.only(top: height * .15),
                     height: height * .80 < 328.0 ? 328.0 : height * .80,

@@ -30,6 +30,7 @@ class _ConfirmDataState extends State<ConfirmData> {
 
   void record() async {
     int space = int.parse((await dbRef.child('admin/parkingSpace').once()).value.toString());
+    code.text = code.text.toUpperCase();
     if(code.text == "ARELLANO_ENTRANCE") {
       if(space > 0) {
         dbRef.child('admin').update({'parkingSpace': space-1});

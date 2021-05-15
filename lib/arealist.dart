@@ -43,7 +43,7 @@ class _AreaListState extends State<AreaList> {
 
   Future<void> dialogCapacity(BuildContext context, String key) async {
     changeCapacity.text =
-        (await dbRef.child('room/${key}').once()).value.toString();
+        (await dbRef.child('room/$key').once()).value.toString();
     return showDialog(
         context: context,
         builder: (context) {
