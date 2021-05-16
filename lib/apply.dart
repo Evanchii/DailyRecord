@@ -266,13 +266,11 @@ class _ApplyState extends State<Apply> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
-        title: Center(
-          child: Image(
+        title: Image(
             image: AssetImage('assets/banner.png'),
             height: 50,
           ),
         ),
-      ),
       body: ListView(
         children: <Widget>[
           SafeArea(

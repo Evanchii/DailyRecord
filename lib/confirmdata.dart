@@ -66,7 +66,8 @@ class _ConfirmDataState extends State<ConfirmData> {
       setState(() {
         area = code.text;
         now = DateTime.now();
-        time = TimeOfDay.now().format(context).toString();
+        // time = TimeOfDay.now().format(context).toString();
+        time = DateFormat('kk:mm:ss').format(now);
         date = DateFormat('yyyy-MM-dd').format(now);
         visible = true;
       });
@@ -101,13 +102,11 @@ class _ConfirmDataState extends State<ConfirmData> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
-        title: Center(
-          child: Image(
+        title: Image(
             image: AssetImage('assets/banner.png'),
             height: 50,
           ),
         ),
-      ),
       body: SafeArea(
         child: ListView(
           children: <Widget>[
@@ -183,7 +182,7 @@ class _ConfirmDataState extends State<ConfirmData> {
                     visible: visible,
                     child: Container(
                       //ConfirmData
-                      height: height * .60 < 329.0 ? 329.0 : height * .60,
+                      height: height * .65 < 300.0 ? 300.0 : height * .65,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[

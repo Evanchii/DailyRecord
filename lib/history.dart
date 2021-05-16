@@ -266,13 +266,11 @@ class _HistoryState extends State<History> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
-        title: Center(
-          child: Image(
+        title: Image(
             image: AssetImage('assets/banner.png'),
             height: 50,
           ),
         ),
-      ),
       body: SafeArea(
         child: ListView(
           children: [

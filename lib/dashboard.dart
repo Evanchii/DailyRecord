@@ -16,7 +16,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
   DatabaseReference dbRef = FirebaseDatabase().reference();
   String uid = "LOADING", type = "NULL";
   int space = 0;
-  bool ins = false, admin = false;
+  bool ins = false, admin = false, applied = true;
 
   @override
   void initState() {
@@ -55,6 +55,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                 "users/" + FirebaseAuth.instance.currentUser.uid + "/userType")
             .once())
         .value;
+    var status = (await FirebaseDatabase.instance.reference().child("users/${FirebaseAuth.instance.currentUser.uid}/parking/status").once()).value.toString();
     setState(() {
       uid = FirebaseAuth.instance.currentUser.displayName;
       if (type == "instructor") {
@@ -67,6 +68,8 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
         ins = false;
         admin = false;
       }
+      if(status == 'null')
+        applied = false;
     });
   }
 
@@ -156,32 +159,35 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                     ),
                   ),
                   Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 60,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Apply()),
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 30),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.group_add),
-                              Expanded(
-                                child: Text(
-                                  'Apply Parking Space',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 16),
+                  Visibility(
+                    visible: !applied,
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Apply()),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 30),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.group_add),
+                                Expanded(
+                                  child: Text(
+                                    'Apply Parking Space',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 16),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),

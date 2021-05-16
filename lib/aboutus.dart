@@ -6,13 +6,11 @@ class AboutUs extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
-        title: Center(
-          child: Image(
+        title: Image(
             image: AssetImage('assets/banner.png'),
             height: 50,
           ),
         ),
-      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
