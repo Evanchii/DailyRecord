@@ -232,33 +232,62 @@ class _ApplyState extends State<Apply> {
   }
 
   void upload() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: new Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              new CircularProgressIndicator(),
+              new Text("Loading"),
+            ],
+          ),
+        );
+      },
+    );
+
     var extDL = _imageFileDL.path.toString().split('.');
     var extORCR = _imageFileORCR.path.toString().split('.');
     var extSchoolID = _imageFileSchoolID.path.toString().split('.');
-
-    await storage
-        .ref()
-        .child(
-            "Driver License/${FirebaseAuth.instance.currentUser.uid}.${extDL[extDL.length - 1]}")
-        .putFile(_imageFileDL);
-    await storage
-        .ref()
-        .child(
-            "ORCR/${FirebaseAuth.instance.currentUser.uid}.${extDL[extORCR.length - 1]}")
-        .putFile(_imageFileORCR);
-    await storage
-        .ref()
-        .child(
-            "SchoolID/${FirebaseAuth.instance.currentUser.uid}.${extDL[extSchoolID.length - 1]}}")
-        .putFile(_imageFileSchoolID);
-    dbRef
-        .child('users/${FirebaseAuth.instance.currentUser.uid}/parking')
-        .update({
-      'firstName': fName.text,
-      'lastName': lName.text,
-      'plateNumber': plateNumber.text,
-      'status': 'On-going',
-    });
+    try {
+      var DL = await storage
+          .ref()
+          .child(
+          "Driver License/${FirebaseAuth.instance.currentUser.uid}.${extDL[extDL
+              .length - 1]}")
+          .putFile(_imageFileDL);
+      var ORCR = await storage
+          .ref()
+          .child(
+          "ORCR/${FirebaseAuth.instance.currentUser.uid}.${extDL[extORCR
+              .length - 1]}")
+          .putFile(_imageFileORCR);
+      var ID = await storage
+          .ref()
+          .child(
+          "SchoolID/${FirebaseAuth.instance.currentUser.uid}.${extDL[extSchoolID
+              .length - 1]}")
+          .putFile(_imageFileSchoolID);
+      dbRef
+          .child('users/${FirebaseAuth.instance.currentUser.uid}/parking')
+          .update({
+        'firstName': fName.text,
+        'lastName': lName.text,
+        'plateNumber': plateNumber.text,
+        'status': 'On-going',
+      });
+      Navigator.pop(context);
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Uploaded!'),));
+    } on Exception catch(e) {
+      Navigator.pop(context);
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Upload failed!'),));
+    }
   }
 
   @override

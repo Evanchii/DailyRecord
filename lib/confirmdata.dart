@@ -20,19 +20,30 @@ class _ConfirmDataState extends State<ConfirmData> {
   void scan() async {
     var status = await Permission.camera.status;
     print(status.toString());
-    await Permission.camera.request();
-    print(await Permission.camera.status);
-    // if (status.isGranted || status.isLimited) {
-    //   await Permission.camera.request();
-    //   String barcode = await scanner.scan();
-    //   if (barcode == null) {
-    //     ScaffoldMessenger.of(context)
-    //         .showSnackBar(SnackBar(content: Text("Invalid QR Code!")));
-    //   } else {
-    //     code.text = barcode;
-    //   }
-    // }else
-    //   Permission.camera.request();
+    if (status.isGranted || status.isLimited) {
+      await Permission.camera.request();
+      String barcode = await scanner.scan();
+      if (barcode == null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Invalid QR Code!")));
+      } else {
+        code.text = barcode;
+      }
+    } else {
+      await Permission.camera.request();
+      status = await Permission.camera.status;
+      if (status.isGranted || status.isLimited) {
+        await Permission.camera.request();
+        String barcode = await scanner.scan();
+        if (barcode == null) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("Invalid QR Code!")));
+        } else {
+          code.text = barcode;
+        }
+      } else
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Can\'t Open Camera, Camera Permission Denied!')));
+    }
   }
 
   void record() async {
