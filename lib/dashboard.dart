@@ -240,7 +240,6 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                     child: Visibility(
                       visible: admin,
                       child: ElevatedButton(
-                        // style: ButtonStyle(backgroundColor: Color(0xffF7971D)),
                         onPressed: () {
                           Navigator.push(
                             context,

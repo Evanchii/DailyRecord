@@ -140,17 +140,13 @@ class _DashboardState extends State<DashFrame> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.grey[400],
         child: Icon(Icons.camera_alt),
-        onPressed: () async {
-          var status = await Permission.camera.status;
-          if (status.isGranted || status.isLimited)
+        onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => ConfirmData(),
               ),
             );
-          else
-            Permission.camera.request();
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

@@ -18,14 +18,21 @@ class _ConfirmDataState extends State<ConfirmData> {
   DateTime now;
 
   void scan() async {
+    var status = await Permission.camera.status;
+    print(status.toString());
     await Permission.camera.request();
-    String barcode = await scanner.scan();
-    if (barcode == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Invalid QR Code!")));
-    } else {
-      code.text = barcode;
-    }
+    print(await Permission.camera.status);
+    // if (status.isGranted || status.isLimited) {
+    //   await Permission.camera.request();
+    //   String barcode = await scanner.scan();
+    //   if (barcode == null) {
+    //     ScaffoldMessenger.of(context)
+    //         .showSnackBar(SnackBar(content: Text("Invalid QR Code!")));
+    //   } else {
+    //     code.text = barcode;
+    //   }
+    // }else
+    //   Permission.camera.request();
   }
 
   void record() async {
