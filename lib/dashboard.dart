@@ -55,7 +55,13 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
                 "users/" + FirebaseAuth.instance.currentUser.uid + "/userType")
             .once())
         .value;
-    var status = (await FirebaseDatabase.instance.reference().child("users/${FirebaseAuth.instance.currentUser.uid}/parking/status").once()).value.toString();
+    var status = (await FirebaseDatabase.instance
+            .reference()
+            .child(
+                "users/${FirebaseAuth.instance.currentUser.uid}/parking/status")
+            .once())
+        .value
+        .toString();
     setState(() {
       uid = FirebaseAuth.instance.currentUser.displayName;
       if (type == "instructor") {
@@ -68,8 +74,7 @@ class _DashboardState extends State<Dashboard> with WidgetsBindingObserver {
         ins = false;
         admin = false;
       }
-      if(status == 'null')
-        applied = false;
+      if (status == 'null') applied = false;
     });
   }
 

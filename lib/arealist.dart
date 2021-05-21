@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:dailyrecord/history.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -12,7 +14,8 @@ class AreaList extends StatefulWidget {
 class _AreaListState extends State<AreaList> {
   TextEditingController changeCapacity = new TextEditingController();
   DatabaseReference dbRef = FirebaseDatabase.instance.reference();
-  var rooms, lvl = "0", type = "user", title = "";
+  var lvl = "0", type = "user", title = "";
+  SplayTreeMap rooms;
 
   @override
   void initState() {
@@ -25,12 +28,12 @@ class _AreaListState extends State<AreaList> {
             .child("users/${FirebaseAuth.instance.currentUser.uid}/userType")
             .once())
         .value;
-    rooms = (await dbRef.child("room").once()).value;
+    rooms = SplayTreeMap.from((await dbRef.child("room").once()).value);
     if (type == "instructor")
-      rooms = (await dbRef
+      rooms = SplayTreeMap.from((await dbRef
               .child("users/${FirebaseAuth.instance.currentUser.uid}/rooms/")
               .once())
-          .value;
+          .value);
     setState(() {
       lvl = ModalRoute.of(context).settings.arguments;
       if (lvl == "1") {

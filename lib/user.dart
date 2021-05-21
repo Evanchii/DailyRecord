@@ -277,18 +277,21 @@ class _UserDataState extends State<UserData> with WidgetsBindingObserver {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text(
-                            "Adress:",
+                            "Address:",
                             style: TextStyle(
                                 fontSize: 15.0,
                                 fontWeight: FontWeight.w500,
                                 color: Colors.white),
                           ),
-                          Text(
-                            address.toString(),
-                            style: TextStyle(
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white),
+                          Flexible(
+                            child: Text(
+                              address.toString(),
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white),
+                            ),
                           ),
                         ],
                       ),

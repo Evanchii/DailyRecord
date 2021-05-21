@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dailyrecord/dashframe.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,8 @@ class _ApplyState extends State<Apply> {
   DatabaseReference dbRef = FirebaseDatabase().reference();
 
   TextEditingController fName = TextEditingController(),
-  lName = TextEditingController(),
-  plateNumber = TextEditingController();
+      lName = TextEditingController(),
+      plateNumber = TextEditingController();
 
   final picker = ImagePicker();
 
@@ -236,112 +237,134 @@ class _ApplyState extends State<Apply> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return Dialog(
-          child: new Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              new CircularProgressIndicator(),
-              new Text("Loading"),
-            ],
+        return WillPopScope(
+          onWillPop: () => Future.value(false),
+          child: Dialog(
+          child: new Padding(
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            child: new Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                new Padding(
+                    padding: EdgeInsets.all(15),
+                    child: new CircularProgressIndicator()),
+                new Text("Loading"),
+              ],
+            ),
           ),
+        ),
         );
       },
     );
 
-    var extDL = _imageFileDL.path.toString().split('.');
-    var extORCR = _imageFileORCR.path.toString().split('.');
-    var extSchoolID = _imageFileSchoolID.path.toString().split('.');
-    try {
-      var DL = await storage
-          .ref()
-          .child(
-          "Driver License/${FirebaseAuth.instance.currentUser.uid}.${extDL[extDL
-              .length - 1]}")
-          .putFile(_imageFileDL);
-      var ORCR = await storage
-          .ref()
-          .child(
-          "ORCR/${FirebaseAuth.instance.currentUser.uid}.${extDL[extORCR
-              .length - 1]}")
-          .putFile(_imageFileORCR);
-      var ID = await storage
-          .ref()
-          .child(
-          "SchoolID/${FirebaseAuth.instance.currentUser.uid}.${extDL[extSchoolID
-              .length - 1]}")
-          .putFile(_imageFileSchoolID);
-      dbRef
-          .child('users/${FirebaseAuth.instance.currentUser.uid}/parking')
-          .update({
-        'firstName': fName.text,
-        'lastName': lName.text,
-        'plateNumber': plateNumber.text,
-        'status': 'On-going',
-      });
-      Navigator.pop(context);
-      Navigator.pop(context);
+    if (_imageFileDL != null &&
+        _imageFileORCR != null &&
+        _imageFileSchoolID != null &&
+        fName.text.isNotEmpty &&
+        lName.text.isNotEmpty &&
+        plateNumber.text.isNotEmpty) {
+      var extDL = _imageFileDL.path.toString().split('.');
+      var extORCR = _imageFileORCR.path.toString().split('.');
+      var extSchoolID = _imageFileSchoolID.path.toString().split('.');
+      try {
+        var DL = await storage
+            .ref()
+            .child(
+                "Driver License/${FirebaseAuth.instance.currentUser.uid}.${extDL[extDL.length - 1]}")
+            .putFile(_imageFileDL);
+        var ORCR = await storage
+            .ref()
+            .child(
+                "ORCR/${FirebaseAuth.instance.currentUser.uid}.${extDL[extORCR.length - 1]}")
+            .putFile(_imageFileORCR);
+        var ID = await storage
+            .ref()
+            .child(
+                "SchoolID/${FirebaseAuth.instance.currentUser.uid}.${extDL[extSchoolID.length - 1]}")
+            .putFile(_imageFileSchoolID);
+        dbRef
+            .child('users/${FirebaseAuth.instance.currentUser.uid}/parking')
+            .update({
+          'firstName': fName.text,
+          'lastName': lName.text,
+          'plateNumber': plateNumber.text,
+          'status': 'On-going',
+        });
+        Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => DashFrame()));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Uploaded!'),
+        ));
+      } on Exception catch (e) {
+        Navigator.pop(context);
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Upload failed!'),
+        ));
+      }
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Uploaded!'),));
-    } on Exception catch(e) {
+          SnackBar(content: Text('Please provide all required data!')));
       Navigator.pop(context);
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed!'),));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).backgroundColor,
-        title: Image(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).backgroundColor,
+          title: Image(
             image: AssetImage('assets/banner.png'),
             height: 50,
           ),
         ),
-      body: ListView(
-        children: <Widget>[
-          SafeArea(
-            child: Container(
-              padding: EdgeInsets.all(15.0),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          "Apply Parking Space",
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
+        body: new GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+          },
+          child: ListView(
+            children: <Widget>[
+              SafeArea(
+                child: Container(
+                  padding: EdgeInsets.all(15.0),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                              "Apply Parking Space",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20.0,
+                            ),
                             Text(
                               "First Name: ",
                               style: TextStyle(
                                   fontSize: 15.0, color: Colors.white),
                             ),
-                             TextField(
-                                controller: fName,
-                                decoration: InputDecoration(
-                                  hintText: 'Juan',
-                                  fillColor: Color(0x66B6B6B6),
-                                  filled: true,
-                                  hintStyle: TextStyle(
-                                      color: Colors.grey,
-                                      decorationColor: Colors.white),
-                                ),
-                                cursorColor: Theme.of(context).accentColor,
+                            TextField(
+                              controller: fName,
+                              decoration: InputDecoration(
+                                hintText: 'Juan',
+                                fillColor: Color(0x66B6B6B6),
+                                filled: true,
+                                hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    decorationColor: Colors.white),
                               ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
+                              cursorColor: Theme.of(context).accentColor,
+                            ),
+                            SizedBox(
+                              height: 10.0,
+                            ),
                             Text(
                               "Last Name: ",
                               style: TextStyle(
@@ -359,9 +382,9 @@ class _ApplyState extends State<Apply> {
                               ),
                               cursorColor: Theme.of(context).accentColor,
                             ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
+                            SizedBox(
+                              height: 10.0,
+                            ),
                             Text(
                               "Plate Number: ",
                               style: TextStyle(
@@ -379,125 +402,128 @@ class _ApplyState extends State<Apply> {
                               ),
                               cursorColor: Theme.of(context).accentColor,
                             ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "School ID",
-                              style: TextStyle(
-                                fontSize: 15.0,
-                                color: Colors.white,
-                              ),
+                            SizedBox(
+                              height: 10.0,
                             ),
-                            ElevatedButton(
-                              onPressed: () {
-                                _showDialogSchoolID(context);
-                              },
-                              child: Text('Select'),
-                              style: ElevatedButton.styleFrom(
-                                primary: Theme.of(context).primaryColor,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  "School ID",
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    FocusScope.of(context).requestFocus(new FocusNode());
+                                    _showDialogSchoolID(context);
+                                  },
+                                  child: Text('Select'),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                                child: _imageFileSchoolID == null
+                                    ? Text('')
+                                    : Image.file(
+                                        _imageFileSchoolID,
+                                        width: 300.0,
+                                        height: 300.0,
+                                      )),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  "Photo of Drivers License",
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    FocusScope.of(context).requestFocus(new FocusNode());
+                                    _showDialogDL(context);
+                                  },
+                                  child: Text('Select'),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                                child: _imageFileDL == null
+                                    ? Text('')
+                                    : Image.file(
+                                        _imageFileDL,
+                                        width: 300.0,
+                                        height: 300.0,
+                                      )),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  "Photo of ORCR",
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    FocusScope.of(context).requestFocus(new FocusNode());
+                                    _showDialogORCR(context);
+                                  },
+                                  child: Text('Select'),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                                child: _imageFileORCR == null
+                                    ? Text('')
+                                    : Image.file(
+                                        _imageFileORCR,
+                                        width: 300.0,
+                                        height: 300.0,
+                                      )),
+                            SizedBox(
+                              height: 50.0,
+                            ),
+                            Center(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  upload();
+                                },
+                                child: Text('Submit'),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Theme.of(context).primaryColor,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        Container(
-                            child: _imageFileSchoolID == null
-                                ? Text('')
-                                : Image.file(
-                                    _imageFileSchoolID,
-                                    width: 300.0,
-                                    height: 300.0,
-                                  )),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Photo of Drivers License",
-                              style: TextStyle(
-                                fontSize: 15.0,
-                                color: Colors.white,
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                _showDialogDL(context);
-                              },
-                              child: Text('Select'),
-                              style: ElevatedButton.styleFrom(
-                                primary: Theme.of(context).primaryColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                            child: _imageFileDL == null
-                                ? Text('')
-                                : Image.file(
-                                    _imageFileDL,
-                                    width: 300.0,
-                                    height: 300.0,
-                                  )),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Photo of ORCR",
-                              style: TextStyle(
-                                fontSize: 15.0,
-                                color: Colors.white,
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                _showDialogORCR(context);
-                              },
-                              child: Text('Select'),
-                              style: ElevatedButton.styleFrom(
-                                primary: Theme.of(context).primaryColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                            child: _imageFileORCR == null
-                                ? Text('')
-                                : Image.file(
-                                    _imageFileORCR,
-                                    width: 300.0,
-                                    height: 300.0,
-                                  )),
-                        SizedBox(
-                          height: 50.0,
-                        ),
-                        Center(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              upload();
-                            },
-                            child: Text('Submit'),
-                            style: ElevatedButton.styleFrom(
-                              primary: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 }

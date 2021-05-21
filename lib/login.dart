@@ -119,11 +119,15 @@ class _LoginState extends State {
                       child: Text('OK'),
                       onPressed: () {
                         FocusScope.of(context).unfocus();
-                        fail = false;
-                        FirebaseAuth.instance
-                            .sendPasswordResetEmail(email: forgotEmail.text)
-                            .onError((error, stackTrace) => fail = true)
-                            .whenComplete(() => success());
+                        if(forgotEmail.text.contains('@dailyrecord.com'))
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Feature is disabled for Demo Accounts.')));
+                        else {
+                          fail = false;
+                          FirebaseAuth.instance
+                              .sendPasswordResetEmail(email: forgotEmail.text)
+                              .onError((error, stackTrace) => fail = true)
+                              .whenComplete(() => success());
+                        }
                       },
                     ),
                   ),

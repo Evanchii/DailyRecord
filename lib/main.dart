@@ -7,6 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+/*
+* DEMO Accounts
+*
+* User Email: user@dailyrecord.com
+* Instructor Email: instructor@dailyrecord.com
+* Admin Email: admin@dailyrecord.com
+* Password: asdf1234
+* */
+
 void main() async {
   // permissionCheck();
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +24,8 @@ void main() async {
 
   if (FirebaseAuth.instance.currentUser != null) {
     runApp(new MaterialApp(
+      builder: (context, child) =>
+          MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: child),
       home: DashFrame(),
       theme: ThemeData(
         // Define the default brightness and colors.
@@ -36,6 +47,8 @@ void main() async {
     ));
   } else {
     runApp(new MaterialApp(
+      builder: (context, child) =>
+          MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: child),
       home: Splashscreen(),
       theme: ThemeData(
         // Define the default brightness and colors.

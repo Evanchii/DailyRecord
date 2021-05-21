@@ -28,6 +28,7 @@ class _HistoryState extends State<History> {
   void getData() async {
     history = (await dbRef.child("users/$uid/history").once()).value;
     data = ModalRoute.of(context).settings.arguments;
+    print(data.toString());
     if (data != "user") {
       visible = true;
       history = (await dbRef.child("roomHistory/$data").once()).value;
@@ -214,7 +215,7 @@ class _HistoryState extends State<History> {
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 content:
-                                    Text('Please enter all required data!')));
+                                Text('Please enter all required data!')));
                           }
                         },
                       ),
@@ -244,10 +245,10 @@ class _HistoryState extends State<History> {
     TimeOfDay picked;
     if (mode == "min") {
       picked =
-          await showTimePicker(context: context, initialTime: selectedMinTime);
+      await showTimePicker(context: context, initialTime: selectedMinTime);
     } else {
       picked =
-          await showTimePicker(context: context, initialTime: selectedMaxTime);
+      await showTimePicker(context: context, initialTime: selectedMaxTime);
     }
     if (picked != null)
       setState(() {
@@ -267,10 +268,10 @@ class _HistoryState extends State<History> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).backgroundColor,
         title: Image(
-            image: AssetImage('assets/banner.png'),
-            height: 50,
-          ),
+          image: AssetImage('assets/banner.png'),
+          height: 50,
         ),
+      ),
       body: SafeArea(
         child: ListView(
           children: [
@@ -294,10 +295,10 @@ class _HistoryState extends State<History> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 1,
-                        ),),
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 1,
+                      ),),
                     child: createTable(),
                   ),
                 ],
